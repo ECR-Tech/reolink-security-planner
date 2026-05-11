@@ -3,70 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ReoLink Security Planner BETA</title>
+    <title>ReoLink Security Planner by Ecoradinmalin</title>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    
     <style>
-        /* Reset de base pour supprimer les marges par défaut */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { width: 100vw; height: 100dvh; overflow: hidden; background-color: #f4f4f4; }
-        
-        /* En-tête (Header) */
-        header {
-            position: absolute; top: 0; left: 0; width: 100%; height: 60px;
-            background: white; z-index: 1000; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header-title { font-weight: bold; font-size: 18px; color: #333; display: flex; align-items: center; gap: 10px;}
-        .beta-tag { background: #e53935; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold;}
-        .author { font-size: 12px; color: #0066cc; display: block; font-weight: normal; margin-top: 2px; text-decoration: none;}
-        .btn-youtube { background: #cc0000; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;}
-        
-        /* Conteneur de la carte */
-        #map { width: 100%; height: calc(100dvh - 60px); margin-top: 60px; z-index: 1; }
+        :root { --primary: #0055ff; --dark: #1a1a1a; --light: #f4f4f9; --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.15); --youtube: #ff0000; --amazon: #ff9900; }
+        body, html { margin: 0; padding: 0; height: 100dvh; width: 100vw; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; background-color: #f4f4f4; }
 
-        /* Contrôles flottants à droite */
-        .map-controls {
-            position: absolute; top: 80px; right: 20px; z-index: 1000;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .control-btn {
-            background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; text-align: center; font-size: 12px; font-weight: bold;
-        }
+        /* --- Header --- */
+        header { position: absolute; top: 10px; left: 10px; right: 10px; background: var(--white); padding: 10px 15px; border-radius: 12px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        .header-title h1 { margin: 0; font-size: 16px; color: var(--dark); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .beta-tag { background: red; color: white; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: bold; letter-spacing: 0.5px; }
+        .header-title span.author { color: var(--primary); font-size: 12px; }
+        .yt-btn { background: var(--youtube); color: white; text-decoration: none; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
 
-        /* Le conteneur du Catalogue Flottant (en bas) */
+        /* --- Controls (Top Right) --- */
+        .top-right-controls { position: absolute; top: 75px; right: 10px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+        .control-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .control-label { font-size: 10px; color: #555; background: rgba(255, 255, 255, 0.85); padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        .custom-btn { width: 44px; height: 44px; background: white; border-radius: 8px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; border: 2px solid rgba(0,0,0,0.1); font-weight: bold; color: var(--dark); }
+        .leaflet-control-geocoder { border-radius: 8px !important; box-shadow: var(--shadow) !important; margin: 0 !important; }
+        
+        #map { height: 100%; width: 100%; z-index: 1; }
+
+        /* --- Camera Markers on Map --- */
+        .camera-wrapper { position: relative; width: 38px; height: 38px; transform-origin: center center; transition: transform 0.1s linear; }
+        .camera-icon-bg { background: var(--white); border: 2px solid var(--dark); border-radius: 50%; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.3); overflow: hidden; }
+        .camera-delete { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: red; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .rotation-handle { width: 28px; height: 28px; background: white; border: 2px solid var(--primary); border-radius: 50%; box-shadow: 0 3px 6px rgba(0,0,0,0.3); cursor: grab; display: flex; align-items: center; justify-content: center; }
+        .rotation-handle:active { cursor: grabbing; background: #e6f0ff; }
+        .cone-label { background: rgba(255, 255, 255, 0.9); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; white-space: nowrap; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translate(-50%, -50%); }
+        .label-vision { color: #0055ff; border: 1px solid #0055ff; } .label-pir { color: #666666; border: 1px solid #666666; } .label-flood { color: #e6b800; border: 1px solid #e6b800; }
+
+        /* --- Floating Catalog UI (Chips Approach) --- */
         .floating-catalog-wrapper {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
-            /* FIX iOS */
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* Carrousel des caméras */
         .camera-carousel {
             display: flex; gap: 16px; overflow-x: auto; padding: 12px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+            cursor: grab; /* Curseur pour PC */
         }
+        .camera-carousel:active { cursor: grabbing; }
         .camera-carousel::-webkit-scrollbar, .chips-container::-webkit-scrollbar { display: none; }
         
-        /* Cartes de caméras individuelles */
         .camera-card {
             flex: 0 0 auto; width: 110px; height: 110px; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 8px; background: white;
-            border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: grab;
-            scroll-snap-align: start; transition: transform 0.2s, border-color 0.2s; position: relative; border: 2px solid transparent;
+            border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s; position: relative; border: 2px solid transparent;
+            user-select: none;
         }
-        .camera-card:hover { border-color: #e53935; }
-        .camera-card:active { cursor: grabbing; transform: scale(0.95); }
-        .camera-icon { width: 50px; height: 50px; background: #f0f0f0; border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px;}
-        .camera-card span { font-size: 10px; font-weight: 600; text-align: center; color: #333; line-height: 1.2;}
-        .info-btn { position: absolute; top: 4px; right: 4px; background: #e0e0e0; color: #555; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;}
-        
-        /* Barre des catégories (Chips) */
+        .camera-card:hover { border-color: var(--primary); }
+        .camera-card:active { transform: scale(0.95); }
+        .cam-img-cat { height: 45px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 8px; mix-blend-mode: multiply; pointer-events: none;}
+        .cam-placeholder { font-size: 30px; margin-bottom: 5px; display: block; pointer-events: none;}
+        .camera-card .name { font-size: 10px; font-weight: 600; text-align: center; color: #333; line-height: 1.2; pointer-events: none;}
+        .info-btn { position: absolute; top: 4px; right: 4px; background: #e0e0e0; color: #555; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 2;}
+        .info-btn:hover { background: #ccc; }
+
         .chips-container { display: flex; gap: 8px; overflow-x: auto; padding: 4px; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
-        /* Centrage sur grand écran */
         @media (min-width: 768px) { .chips-container { justify-content: center; } }
         
         .chip {
@@ -74,29 +77,48 @@
             border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;
         }
-        .chip.active { background: #e53935; color: white; border-color: #e53935; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 85, 255, 0.3); }
 
-        /* Mentions en bas */
-        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -4px;}
+        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -4px; cursor: pointer; text-decoration: underline;}
+
+        /* --- Modals & Utilities --- */
+        #fab-basket { position: absolute; bottom: 180px; right: 20px; width: 56px; height: 56px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: var(--shadow); z-index: 1001; cursor: pointer; transition: transform 0.2s;}
+        #fab-basket:hover { transform: scale(1.05); }
+        #basket-count { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80%; border-radius: 15px; padding: 20px; position: relative; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #888;}
+        .tag { display: inline-block; background: var(--primary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; margin-right: 5px; margin-bottom: 5px; font-weight: bold; }
+        
+        .tech-input { width: 45px; padding: 2px 4px; margin: 0 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; text-align: center; color: var(--primary); background: white; }
+        .tech-input:focus { outline: 2px solid var(--primary); }
     </style>
 </head>
 <body>
 
     <header>
-        <div>
-            <div class="header-title">ReoLink Security Planner <span class="beta-tag">BETA</span></div>
-            <a href="#" class="author">by Ecoradinmalin</a>
+        <div class="header-title">
+            <h1><span data-i18n="title">ReoLink Security Planner</span> <span class="beta-tag">BETA</span></h1>
+            <span class="author">by Ecoradinmalin</span>
         </div>
-        <a href="#" id="btn-youtube-link" class="btn-youtube" target="_blank">▶ Ma Chaîne</a>
+        <a href="https://youtube.com/@ecoradinmalin" target="_blank" class="yt-btn">▶ <span data-i18n="ytSub">Ma Chaîne</span></a>
     </header>
 
-    <div class="map-controls">
-        <div class="control-btn">🔍 Rechercher une adresse</div>
-        <div class="control-btn" style="text-align: center;">EN</div>
-        <div class="control-btn" style="text-align: center;">🗺️ Carte / Satellite</div>
+    <div class="top-right-controls">
+        <div class="control-group">
+            <span class="control-label" data-i18n="langLabel">Langue</span>
+            <div class="custom-btn" onclick="toggleLang()" id="lang-btn" style="font-size: 14px;">EN</div>
+        </div>
+        <div class="control-group">
+            <span class="control-label" data-i18n="mapSat">Carte / Satellite</span>
+            <div class="custom-btn" onclick="toggleLayer()" id="layer-btn">🗺️</div>
+        </div>
     </div>
 
     <div id="map"></div>
+
+    <div id="fab-basket" onclick="toggleModal('basket-modal')">🛒<div id="basket-count">0</div></div>
 
     <div class="floating-catalog-wrapper">
         <div id="camera-results" class="camera-carousel">
@@ -105,142 +127,328 @@
         <div class="chips-container" id="chips-container">
             </div>
         
-        <div class="mentions">Mentions Légales & Affiliation</div>
+        <div class="mentions" onclick="toggleModal('cgu-modal')" data-i18n="cgu">Mentions Légales & Affiliation</div>
+    </div>
+
+    <div id="basket-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal('basket-modal')">×</span>
+            <h2 data-i18n="myProject">Mon Projet</h2>
+            <div id="basket-items">Votre panier est vide.</div>
+            <hr>
+            <div id="basket-total-links" style="display:none; text-align:center;">
+                <a id="global-amz-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; margin-bottom:10px; background:var(--amazon); border-radius:8px; font-weight:bold; color:white; text-decoration:none; box-sizing:border-box;" data-i18n="seeAllAmz">Voir tout sur Amazon</a>
+                <a id="global-reo-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; background:var(--primary); border-radius:8px; font-weight:bold; color:white; text-decoration:none; box-sizing:border-box;" data-i18n="seeAllReo">Voir tout sur Reolink</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal('info-modal')">×</span>
+            <h2 id="info-title" style="margin-top: 0; margin-bottom: 10px;">Nom Caméra</h2>
+            <div id="info-tags" style="margin-bottom: 15px;"></div>
+            <p id="info-desc" style="font-size: 14px; line-height: 1.5; color: #444;"></p>
+            
+            <div style="background: #f4f4f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px;">
+                <strong style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; font-size: 14px;">
+                    <span data-i18n="specs">Spécifications techniques :</span>
+                    <span style="font-size: 10px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px;" data-i18n="editable">Éditable</span>
+                </strong>
+                📐 <span data-i18n="angle">Angle de vision :</span> <input type="number" id="info-angle" class="tech-input"><strong>°</strong><br>
+                👁️ <span data-i18n="visionMax">Vision globale max :</span> <input type="number" id="info-vision" class="tech-input"><strong>m</strong><br>
+                🏃‍♂️ <span data-i18n="pir">Détection PIR/IA :</span> <input type="number" id="info-pir" class="tech-input"><strong>m</strong><br>
+                💡 <span data-i18n="flood">Éclairage (Floodlight) :</span> <input type="number" id="info-flood" class="tech-input"><strong>m</strong>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <a id="info-amz-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--amazon); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(255,153,0,0.2);">Amazon</a>
+                <a id="info-reo-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,85,255,0.2);">Reolink</a>
+            </div>
+            <a id="info-yt-btn" href="#" target="_blank" style="display:block; text-align:center; background:var(--youtube); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:bold; box-shadow: 0 4px 6px rgba(255,0,0,0.2);">🎬 <span data-i18n="ytBtn">Voir mon test complet</span></a>
+        </div>
+    </div>
+
+    <div id="cgu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal('cgu-modal')">×</span>
+            <h3 data-i18n="cguTitle">Mentions Légales & CGU</h3>
+            <p style="font-size: 14px; line-height: 1.5;" data-i18n="cguText">
+                Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée.
+            </p>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="config.js"></script>
 
     <script>
-        // Vérification de la présence de config.js
-        if (typeof appConfig === 'undefined') {
-            console.error("Erreur : Le fichier config.js n'a pas été chargé.");
+        // --- 1. MOTEUR DE TRADUCTION ---
+        const dict = {
+            fr: { title: "ReoLink Security Planner", ytSub: "Ma Chaîne", langLabel: "Langue", mapSat: "Carte / Satellite", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre panier est vide.", myProject: "Mon Projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifiez pour ajuster les cônes", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
+            en: { title: "ReoLink Security Planner", ytSub: "My Channel", langLabel: "Language", mapSat: "Map / Satellite", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your cart is empty.", myProject: "My Project", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Edit to adjust cones live", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
+        };
+
+        let currentLang = (navigator.language || navigator.userLanguage).startsWith('fr') ? 'fr' : 'en';
+
+        function updateLangUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[currentLang][key]) el.innerHTML = dict[currentLang][key];
+            });
+            const geoInput = document.querySelector('.leaflet-control-geocoder-form input');
+            if (geoInput) geoInput.placeholder = dict[currentLang].search;
+            document.getElementById('lang-btn').innerText = currentLang === 'fr' ? 'EN' : 'FR';
+            
+            updateBasketUI();
+            Object.values(placedCameras).forEach(cam => {
+                cam.labels[0].getElement().innerHTML = dict[currentLang].visionLabel;
+                cam.labels[1].getElement().innerHTML = dict[currentLang].floodLabel;
+                cam.labels[2].getElement().innerHTML = dict[currentLang].pirLabel;
+            });
+
+            // Mettre à jour le texte des chips de filtres
+            renderChips();
         }
 
-        // --- 1. INITIALISATION DE LA CARTE ---
-        const map = L.map('map', {zoomControl: false}).setView([48.8566, 2.3522], 17);
+        function toggleLang() { currentLang = currentLang === 'fr' ? 'en' : 'fr'; updateLangUI(); }
+
+        // --- 2. MOTEUR D'AFFILIATION ---
+        function applyAffiliate(url, type) {
+            if (!url || url.trim() === '' || url === '#') return '#';
+            try {
+                const urlObj = new URL(url);
+                if (type === 'amazon') {
+                    urlObj.searchParams.set('tag', 'ecoradinmalin-21');
+                    urlObj.searchParams.set('linkId', '6858a062b5e01978d1f0af796bd01b02');
+                    urlObj.searchParams.set('ref_', 'as_li_ss_tl');
+                } else if (type === 'reolink') {
+                    urlObj.searchParams.set('aff', '974');
+                }
+                return urlObj.toString();
+            } catch(e) {
+                let connector = url.includes('?') ? '&' : '?';
+                if (type === 'amazon') return url + connector + "tag=ecoradinmalin-21&linkId=6858a062b5e01978d1f0af796bd01b02&ref_=as_li_ss_tl";
+                if (type === 'reolink') return url + connector + "aff=974";
+                return url;
+            }
+        }
+
+        // --- 3. INIT CARTE ---
+        const map = L.map('map', { center: [48.8566, 2.3522], zoom: 19, maxZoom: 22, zoomControl: false });
         L.control.zoom({ position: 'bottomleft' }).addTo(map);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 20
-        }).addTo(map);
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 22, maxNativeZoom: 19 }).addTo(map);
+        const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22, maxNativeZoom: 19 });
 
-        // --- 2. LIAISON DES LIENS GLOBAUX ---
-        // Exemple: rediriger le bouton Youtube vers ta chaine ou la boutique globale
-        document.getElementById('btn-youtube-link').href = appConfig.globalLinks.reolink;
+        let isSatellite = false;
+        function toggleLayer() {
+            if (isSatellite) { map.removeLayer(satLayer); osmLayer.addTo(map); document.getElementById('layer-btn').innerText = "🗺️"; } 
+            else { map.removeLayer(osmLayer); satLayer.addTo(map); document.getElementById('layer-btn').innerText = "🛰️"; }
+            isSatellite = !isSatellite;
+        }
 
-        // --- 3. GÉNÉRATION DES CATÉGORIES (Chips) ---
-        const chipsContainer = document.getElementById('chips-container');
-        
-        // Bouton "Toutes" par défaut
-        const btnToutes = document.createElement('button');
-        btnToutes.className = 'chip active';
-        btnToutes.setAttribute('data-category', 'toutes');
-        btnToutes.textContent = 'Toutes';
-        chipsContainer.appendChild(btnToutes);
+        const geocoderControl = L.Control.geocoder({ defaultMarkGeocode: false }).on('markgeocode', function(e) { map.fitBounds(e.geocode.bbox); }).addTo(map);
+        const searchGroup = document.createElement('div'); searchGroup.className = 'control-group'; 
+        searchGroup.innerHTML = '<span class="control-label" data-i18n="search">Rechercher une adresse</span>';
+        searchGroup.appendChild(geocoderControl.getContainer()); document.querySelector('.top-right-controls').prepend(searchGroup);
 
-        // Boucle sur les catégories du config.js
-        appConfig.categories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'chip';
-            btn.setAttribute('data-category', cat.id);
-            btn.textContent = cat.name.fr; // Utilise le nom en français
-            chipsContainer.appendChild(btn);
-        });
+        let placedCameras = {}; let basket = [];
+        const cameras = appConfig.cameras;
 
-        // --- 4. AFFICHAGE DES CAMÉRAS ---
-        const carousel = document.getElementById('camera-results');
+        document.getElementById('global-amz-btn').href = applyAffiliate(appConfig.globalLinks.amazon, 'amazon');
+        document.getElementById('global-reo-btn').href = applyAffiliate(appConfig.globalLinks.reolink, 'reolink');
 
-        function renderCameras(filterId) {
+        function toggleModal(id) { const modal = document.getElementById(id); modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex'; }
+
+        // --- 4. CATALOGUE ET CHIPS (NOUVELLE UI) ---
+        let currentFilter = 'toutes';
+
+        function renderChips() {
+            const container = document.getElementById('chips-container');
+            container.innerHTML = '';
+            
+            const btnToutes = document.createElement('button');
+            btnToutes.className = `chip ${currentFilter === 'toutes' ? 'active' : ''}`;
+            btnToutes.setAttribute('data-category', 'toutes');
+            btnToutes.textContent = currentLang === 'fr' ? 'Toutes' : 'All';
+            container.appendChild(btnToutes);
+
+            appConfig.categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `chip ${currentFilter === cat.id ? 'active' : ''}`;
+                btn.setAttribute('data-category', cat.id);
+                btn.textContent = cat.name[currentLang];
+                container.appendChild(btn);
+            });
+
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFilter = e.target.getAttribute('data-category');
+                    renderCamerasList();
+                });
+            });
+        }
+
+        function renderCamerasList() {
+            const carousel = document.getElementById('camera-results');
             carousel.innerHTML = '';
             
-            // Filtre depuis appConfig.cameras
-            const filtered = filterId === 'toutes' 
-                ? appConfig.cameras 
-                : appConfig.cameras.filter(c => c.categoryId === filterId);
+            const filtered = currentFilter === 'toutes' 
+                ? cameras 
+                : cameras.filter(c => c.categoryId === currentFilter);
 
             filtered.forEach(cam => {
-                const card = document.createElement('div');
-                card.className = 'camera-card';
-                card.setAttribute('draggable', 'true'); 
-                
-                // Données envoyées lors du Drag & Drop
-                card.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('application/json', JSON.stringify(cam));
-                    card.style.opacity = '0.5';
-                });
-                card.addEventListener('dragend', (e) => {
-                    card.style.opacity = '1';
-                });
+                const card = document.createElement('div'); card.className = 'camera-card';
+                const imageHtml = (cam.img && cam.img !== '') ? 
+                    `<img src="${cam.img}" class="cam-img-cat" alt="${cam.name}">` : 
+                    `<span class="cam-placeholder">📹</span>`;
 
-                // Si cam.img est vide, on affiche l'émoji, sinon l'image
-                const imgHTML = cam.img !== '' 
-                    ? `<img src="${cam.img}" alt="${cam.name}" style="width:50px; height:50px; object-fit:contain; margin-bottom:6px;">`
-                    : `<div class="camera-icon">🎥</div>`;
-
-                card.innerHTML = `
-                    <div class="info-btn" title="${cam.desc.fr}">i</div>
-                    ${imgHTML}
-                    <span>${cam.name}</span>
-                `;
+                card.innerHTML = `<div class="info-btn" onclick="event.stopPropagation(); showCameraInfo('${cam.id}')">i</div>${imageHtml}<span class="name">${cam.name}</span>`;
+                // Le fameux CLIC pour placer la caméra !
+                card.onclick = () => addCameraToMap(cam);
                 carousel.appendChild(card);
             });
+            carousel.scrollTo({ left: 0, behavior: 'smooth' });
         }
 
-        // --- 5. GESTION DES CLICS SUR LES CHIPS ---
-        // On doit re-sélectionner les chips car ils viennent d'être générés
-        const allChips = document.querySelectorAll('.chip');
+        // --- SCRIPT POUR DÉFILER LE CARROUSEL À LA SOURIS (PC) ---
+        const slider = document.getElementById('camera-results');
+        let isDown = false; let startX; let scrollLeft;
         
-        allChips.forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                allChips.forEach(c => c.classList.remove('active'));
-                e.target.classList.add('active');
-                renderCameras(e.target.getAttribute('data-category'));
-                carousel.scrollTo({ left: 0, behavior: 'smooth' });
-            });
-        });
-
-        // --- 6. GESTION DU DROP SUR LA CARTE ---
-        const mapContainer = document.getElementById('map');
-        
-        mapContainer.addEventListener('dragover', (e) => {
-            e.preventDefault(); 
-        });
-
-        mapContainer.addEventListener('drop', (e) => {
+        slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
+        slider.addEventListener('mouseleave', () => { isDown = false; });
+        slider.addEventListener('mouseup', () => { isDown = false; });
+        slider.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
             e.preventDefault();
-            const camDataString = e.dataTransfer.getData('application/json');
-            
-            if(camDataString) {
-                const cam = JSON.parse(camDataString);
-                const latlng = map.mouseEventToLatLng(e);
-                
-                const markerIcon = L.divIcon({
-                    html: '<div style="background:white;border-radius:50%;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,0.3);text-align:center;font-size:16px;">🎥</div>',
-                    className: 'custom-map-icon',
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
-                });
-
-                // Popup riche utilisant les données de config.js
-                const popupContent = `
-                    <div style="text-align:center;">
-                        <b>${cam.name}</b><br>
-                        <span style="font-size:11px; color:#666;">Angle: ${cam.angle}° | Vision: ${cam.visionRange}m</span><br>
-                        <a href="${cam.amzLink || cam.reoLink}" target="_blank" style="display:inline-block; margin-top:5px; background:#ff9900; color:white; padding:3px 8px; border-radius:4px; text-decoration:none; font-size:11px;">Voir l'offre</a>
-                    </div>
-                `;
-
-                L.marker(latlng, { icon: markerIcon, draggable: true })
-                 .addTo(map)
-                 .bindPopup(popupContent)
-                 .openPopup();
-            }
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // Vitesse de défilement
+            slider.scrollLeft = scrollLeft - walk;
         });
 
-        // Lancement initial : affiche toutes les caméras
-        renderCameras('toutes');
+        // --- 5. FICHE TECHNIQUE ---
+        function showCameraInfo(camId) {
+            const cam = cameras.find(c => c.id === camId); if(!cam) return;
+            document.getElementById('info-title').innerText = cam.name;
+            document.getElementById('info-desc').innerText = cam.desc[currentLang];
+            document.getElementById('info-tags').innerHTML = cam.tags[currentLang].map(t => `<span class="tag">${t}</span>`).join('');
+            
+            const fields = [
+                { id: 'info-angle', key: 'angle' }, { id: 'info-vision', key: 'visionRange' },
+                { id: 'info-pir', key: 'pirRange' }, { id: 'info-flood', key: 'floodRange' }
+            ];
+
+            fields.forEach(f => {
+                const input = document.getElementById(f.id);
+                input.value = cam[f.key];
+                input.oninput = (e) => {
+                    cam[f.key] = parseFloat(e.target.value) || 0;
+                    Object.values(placedCameras).forEach(pc => { if (pc.camId === cam.id) pc.updateFn(); });
+                };
+            });
+            
+            document.getElementById('info-amz-btn').href = applyAffiliate(cam.amzLink, 'amazon');
+            document.getElementById('info-reo-btn').href = applyAffiliate(cam.reoLink, 'reolink');
+            
+            const ytBtn = document.getElementById('info-yt-btn');
+            if (cam.ytLink && cam.ytLink !== '') { ytBtn.style.display = 'block'; ytBtn.href = cam.ytLink; } else { ytBtn.style.display = 'none'; }
+            toggleModal('info-modal');
+        }
+
+        // --- 6. PLACEMENT DES CAMÉRAS SUR LA CARTE ---
+        function getDestinationPoint(lat, lng, distance, heading) {
+            const R = 6378137; const lat1 = lat * Math.PI / 180; const lng1 = lng * Math.PI / 180; const brng = heading * Math.PI / 180; const dR = distance / R;
+            const lat2 = Math.asin(Math.sin(lat1) * Math.cos(dR) + Math.cos(lat1) * Math.sin(dR) * Math.cos(brng));
+            const lng2 = lng1 + Math.atan2(Math.sin(brng) * Math.sin(dR) * Math.cos(lat1), Math.cos(dR) - Math.sin(lat1) * Math.sin(lat2));
+            return [lat2 * 180 / Math.PI, lng2 * 180 / Math.PI];
+        }
+        function createConePoints(center, distance, angleFOV, heading) {
+            const points = []; points.push([center.lat, center.lng]); const startAngle = heading - (angleFOV / 2); const steps = 15; 
+            for (let i = 0; i <= steps; i++) { points.push(getDestinationPoint(center.lat, center.lng, distance, startAngle + (i * angleFOV / steps))); }
+            return points;
+        }
+
+        function addCameraToMap(camData) {
+            const uniqueId = 'cam_' + Date.now(); const center = map.getCenter(); let heading = 180; 
+            
+            const markerInnerHtml = (camData.img && camData.img !== '') ? 
+                `<img src="${camData.img}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                `<svg viewBox="0 0 24 24" width="20" height="20" fill="black"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>`;
+
+            const iconHTML = `<div class="camera-wrapper" id="wrapper_${uniqueId}"><div class="camera-icon-bg">${markerInnerHtml}</div><div class="camera-delete" onclick="event.stopPropagation(); removeCamera('${uniqueId}')">✖</div></div>`;
+            const mainMarker = L.marker(center, { icon: L.divIcon({ className: '', html: iconHTML, iconSize: [38, 38], iconAnchor: [19, 19] }), draggable: true, zIndexOffset: 1000 }).addTo(map);
+
+            const visionPoly = L.polygon([], { color: '#0055ff', fillColor: '#0055ff', fillOpacity: 0.05, weight: 2 }).addTo(map);
+            const floodPoly = L.polygon([], { color: '#e6b800', fillColor: '#e6b800', fillOpacity: 0.1, weight: 2, dashArray: '5, 5' }).addTo(map);
+            const pirPoly = L.polygon([], { color: '#666666', fillColor: '#666666', fillOpacity: 0.15, weight: 2 }).addTo(map);
+
+            const labelVision = L.marker(center, { icon: L.divIcon({ className: 'cone-label label-vision', html: dict[currentLang].visionLabel, iconSize: [0,0] }) }).addTo(map);
+            const labelFlood = L.marker(center, { icon: L.divIcon({ className: 'cone-label label-flood', html: dict[currentLang].floodLabel, iconSize: [0,0] }) }).addTo(map);
+            const labelPir = L.marker(center, { icon: L.divIcon({ className: 'cone-label label-pir', html: dict[currentLang].pirLabel, iconSize: [0,0] }) }).addTo(map);
+            const handleIconHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="black" stroke-width="2" fill="none"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></svg>`;
+            const rotHandle = L.marker(center, { icon: L.divIcon({ className: 'rotation-handle', html: handleIconHTML, iconSize: [28,28], iconAnchor: [14,14] }), draggable: true, zIndexOffset: 1500 }).addTo(map);
+
+            function updateVision() {
+                const pos = mainMarker.getLatLng();
+                visionPoly.setLatLngs(createConePoints(pos, camData.visionRange, camData.angle, heading));
+                floodPoly.setLatLngs(createConePoints(pos, camData.floodRange, camData.angle, heading));
+                pirPoly.setLatLngs(createConePoints(pos, camData.pirRange, camData.angle, heading));
+                labelVision.setLatLng(getDestinationPoint(pos.lat, pos.lng, camData.visionRange, heading));
+                if (camData.floodRange > 0) { labelFlood.setLatLng(getDestinationPoint(pos.lat, pos.lng, camData.floodRange, heading)); } else { labelFlood.setOpacity(0); }
+                labelPir.setLatLng(getDestinationPoint(pos.lat, pos.lng, camData.pirRange, heading));
+                rotHandle.setLatLng(getDestinationPoint(pos.lat, pos.lng, camData.visionRange + 3, heading));
+                const wrapper = document.getElementById('wrapper_' + uniqueId); if(wrapper) { wrapper.style.transform = `rotate(${heading + 90}deg)`; }
+            }
+
+            mainMarker.on('drag', function() { updateVision(); });
+            rotHandle.on('drag', function(e) {
+                const camPosLayer = map.latLngToLayerPoint(mainMarker.getLatLng()); const handlePosLayer = map.latLngToLayerPoint(e.latlng);
+                let angleRad = Math.atan2(handlePosLayer.x - camPosLayer.x, camPosLayer.y - handlePosLayer.y);
+                heading = (angleRad * 180 / Math.PI); if (heading < 0) heading += 360; updateVision();
+            });
+
+            setTimeout(updateVision, 50);
+            
+            placedCameras[uniqueId] = { camId: camData.id, updateFn: updateVision, marker: mainMarker, handle: rotHandle, polys: [visionPoly, floodPoly, pirPoly], labels: [labelVision, labelFlood, labelPir] };
+            basket.push({ ...camData, uniqueId: uniqueId }); updateBasketCount();
+        }
+
+        window.removeCamera = function(uniqueId) {
+            if (placedCameras[uniqueId]) {
+                map.removeLayer(placedCameras[uniqueId].marker); map.removeLayer(placedCameras[uniqueId].handle);
+                placedCameras[uniqueId].polys.forEach(p => map.removeLayer(p)); placedCameras[uniqueId].labels.forEach(l => map.removeLayer(l));
+                delete placedCameras[uniqueId];
+            }
+            basket = basket.filter(item => item.uniqueId !== uniqueId); updateBasketCount();
+        };
+
+        // --- 7. MISE A JOUR DU PANIER ---
+        function updateBasketCount() { document.getElementById('basket-count').innerText = basket.length; updateBasketUI(); }
+        
+        function updateBasketUI() {
+            const container = document.getElementById('basket-items'); const links = document.getElementById('basket-total-links');
+            if (basket.length === 0) { container.innerHTML = dict[currentLang].cartEmpty; links.style.display = "none"; return; }
+            links.style.display = "block";
+            
+            container.innerHTML = basket.map(item => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#f9f9f9; padding:8px; border-radius:8px;">
+                    <span><strong>${item.name}</strong></span>
+                    <div style="display:flex; gap: 5px;">
+                        <a href="${applyAffiliate(item.amzLink, 'amazon')}" target="_blank" style="background:var(--amazon); color:white; text-decoration:none; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:bold;">AMZ</a>
+                        <a href="${applyAffiliate(item.reoLink, 'reolink')}" target="_blank" style="background:var(--primary); color:white; text-decoration:none; border-radius:4px; padding:4px 8px; font-size:10px; font-weight:bold;">REO</a>
+                        <button onclick="removeCamera('${item.uniqueId}')" style="color:red; border:none; background:none; font-weight:bold; cursor:pointer; font-size:16px;">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Lancement Initial
+        renderChips();
+        renderCamerasList();
+        updateLangUI();
     </script>
 </body>
 </html>
