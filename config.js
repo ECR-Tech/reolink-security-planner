@@ -12,46 +12,107 @@ const appConfig = {
 
     // 2. CATALOGUE DES CAMÉRAS
     cameras: [
-        { 
-            id: 'argus_track', 
-            name: 'Argus Track', 
-            // NOUVEAU : Ajoute une image (Amazon ou autre) ici. 
-            // Laisse vide ('') si tu n'en as pas, le picto générique prendra le relais.
-            img: 'https://m.media-amazon.com/images/I/51wXF1VlqLL._AC_SL1500_.jpg', 
-            
-            angle: 105, 
-            pirRange: 10, floodRange: 15, visionRange: 25,
-            
-            tags: {
-                fr: ['Sur Batterie', 'Wi-Fi', 'Auto-Tracking'],
-                en: ['Battery-Powered', 'Wi-Fi', 'Auto-Tracking']
-            },
-            desc: {
-                fr: 'Caméra sur batterie avec double objectif. Offre une vue grand angle et un zoom avec suivi automatique.',
-                en: 'Battery-powered camera with dual lens. Offers wide-angle view and zoom with auto-tracking.'
-            },
-            
-            amzLink: 'https://www.amazon.fr/dp/B0CVXF8W7C', 
-            reoLink: 'https://reolink.com/fr/product/argus-track/',
-            ytLink: 'https://youtube.com/@ecoradinmalin' 
+{
+        img: 'https://m.media-amazon.com/images/I/61R4L7J4s1L._AC_SL1500_.jpg',
+        angle: 110,
+        pirRange: 10,
+        floodRange: 15,
+        visionRange: 25,
+        tags: {
+            fr: ['Sur Batterie', 'PTZ', '4K'],
+            en: ['Battery‑Powered', 'PTZ', '4K']
         },
-        { 
-            id: 'duo3_poe', 
-            name: 'Duo 3 PoE', 
-            img: 'https://m.media-amazon.com/images/I/61b-9U-0zCL._AC_SL1500_.jpg',
-            angle: 180, 
-            pirRange: 15, floodRange: 20, visionRange: 30,
-            tags: {
-                fr: ['Filaire PoE', '16 Mégapixels', 'Panoramique 180°'],
-                en: ['PoE Wired', '16 Megapixels', '180° Panoramic']
-            },
-            desc: {
-                fr: 'Vue panoramique parfaite sans déformation à 180 degrés. Alimentation via câble Ethernet.',
-                en: 'Perfect 180-degree panoramic view without distortion. Powered via Ethernet cable.'
-            },
-            amzLink: 'https://www.amazon.fr/dp/B0CQ2N5FMT', 
-            reoLink: 'https://reolink.com/fr/product/reolink-duo-3-poe/',
-            ytLink: '' 
-        }
+        desc: {
+            fr: 'Caméra PTZ 4K sur batterie compatible panneau solaire.',
+            en: '4K battery PTZ camera compatible with solar panel.'
+        },
+        amzLink: 'https://www.amazon.fr/s?k=Reolink+Argus+PT+Ultra',
+        reoLink: 'https://reolink.com/fr/product/argus-pt-ultra/',
+        ytLink: ''
+    },
+
+    {
+        id: 'rlc_811a',
+        name: 'RLC‑811A',
+        img: 'https://m.media-amazon.com/images/I/61m1mP4n7mL._AC_SL1500_.jpg',
+        angle: 105,
+        pirRange: 15,
+        floodRange: 20,
+        visionRange: 30,
+        tags: {
+            fr: ['PoE', 'Zoom Optique', 'Spotlight'],
+            en: ['PoE', 'Optical Zoom', 'Spotlight']
+        },
+        desc: {
+            fr: 'Caméra PoE 4K avec zoom optique motorisé et détection IA.',
+            en: '4K PoE camera with motorized optical zoom and AI detection.'
+        },
+        amzLink: 'https://www.amazon.fr/s?k=Reolink+RLC-811A',
+        reoLink: 'https://reolink.com/fr/product/rlc-811a/',
+        ytLink: ''
+    },
+
+    {
+        id: 'rlc_823a',
+        name: 'RLC‑823A',
+        img: 'https://m.media-amazon.com/images/I/61pN8Qf7VBL._AC_SL1500_.jpg',
+        angle: 96,
+        pirRange: 15,
+        floodRange: 25,
+        visionRange: 60,
+        tags: {
+            fr: ['PoE', 'PTZ', 'Auto‑Tracking'],
+            en: ['PoE', 'PTZ', 'Auto‑Tracking']
+        },
+        desc: {
+            fr: 'Caméra PTZ PoE avec rotation motorisée et suivi automatique.',
+            en: 'PoE PTZ camera with motorized rotation and auto‑tracking.'
+        },
+        amzLink: 'https://www.amazon.fr/s?k=Reolink+RLC-823A',
+        reoLink: 'https://reolink.com/fr/product/rlc-823a/',
+        ytLink: ''
+    },
+
+    {
+        id: 'e1_outdoor_pro',
+        name: 'E1 Outdoor Pro',
+        img: 'https://m.media-amazon.com/images/I/61Y0kW4rAUL._AC_SL1500_.jpg',
+        angle: 94,
+        pirRange: 12,
+        floodRange: 15,
+        visionRange: 30,
+        tags: {
+            fr: ['Wi‑Fi', 'PTZ', 'Auto‑Tracking'],
+            en: ['Wi‑Fi', 'PTZ', 'Auto‑Tracking']
+        },
+        desc: {
+            fr: 'Caméra extérieure Wi‑Fi compacte avec rotation et suivi IA.',
+            en: 'Compact outdoor Wi‑Fi camera with pan/tilt and AI tracking.'
+        },
+        amzLink: 'https://www.amazon.fr/s?k=Reolink+E1+Outdoor+Pro',
+        reoLink: 'https://reolink.com/fr/product/e1-outdoor-pro/',
+        ytLink: ''
+    },
+
+    {
+        id: 'duo_floodlight_poe',
+        name: 'Duo Floodlight PoE',
+        img: 'https://m.media-amazon.com/images/I/71Q4m3kYxTL._AC_SL1500_.jpg',
+        angle: 180,
+        pirRange: 15,
+        floodRange: 25,
+        visionRange: 30,
+        tags: {
+            fr: ['PoE', 'Projecteur', '180°'],
+            en: ['PoE', 'Floodlight', '180°']
+        },
+        desc: {
+            fr: 'Caméra panoramique avec puissant projecteur LED intégré.',
+            en: 'Panoramic camera with integrated powerful LED floodlight.'
+        },
+        amzLink: 'https://www.amazon.fr/s?k=Reolink+Duo+Floodlight+PoE',
+        reoLink: 'https://reolink.com/fr/product/reolink-duo-floodlight-poe/',
+        ytLink: ''
+    }
     ]
 };
