@@ -1,5 +1,7 @@
 # 🎥 ReoLink Security Planner by Ecoradinmalin
 
+https://ecr-tech.github.io/reolink-security-planner/
+
 A 100% front-end (serverless) web application designed to plan the installation of Reolink cameras on an interactive map. This tool allows users to accurately simulate viewing angles, motion detection ranges (PIR), and floodlight zones before purchasing or installing hardware.
 
 ## ✨ Features
