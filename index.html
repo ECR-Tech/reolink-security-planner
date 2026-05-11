@@ -13,120 +13,90 @@
         body, html { margin: 0; padding: 0; height: 100dvh; width: 100vw; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; background-color: #f4f4f4; }
 
         /* --- Header Badges --- */
-        .header-badge { position: absolute; top: 15px; left: 15px; background: var(--white); padding: 10px 15px; border-radius: 12px; z-index: 1000; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; pointer-events: auto; max-width: 65%; }
-        .header-title h1 { margin: 0; font-size: 15px; color: var(--dark); font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .beta-tag { background: red; color: white; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: bold; letter-spacing: 0.5px; }
+        .header-badge { position: absolute; top: 12px; left: 10px; background: var(--white); padding: 8px 12px; border-radius: 12px; z-index: 1000; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; max-width: calc(100vw - 150px); pointer-events: auto; }
+        .header-title h1 { margin: 0; font-size: 13px; color: var(--dark); font-weight: 700; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.2;}
+        .beta-tag { background: red; color: white; font-size: 8px; padding: 2px 4px; border-radius: 4px; font-weight: bold; }
         
-        /* Nouveau conteneur Auteur + Langue */
-        .author-lang-wrapper { display: flex; align-items: center; gap: 10px; }
-        .author { color: var(--primary); font-size: 11px; font-weight: bold; }
-        .lang-switch { font-size: 14px; cursor: pointer; user-select: none; display: flex; gap: 4px; align-items: center; background: #f0f0f0; padding: 2px 6px; border-radius: 8px;}
-        .lang-switch span { transition: opacity 0.2s; }
+        .header-subtitle { display: flex; align-items: center; gap: 8px; }
+        .header-badge span.author { color: var(--primary); font-size: 11px; font-weight: 600;}
+        .lang-switcher { font-size: 13px; cursor: pointer; user-select: none; background: #f0f0f0; padding: 2px 6px; border-radius: 6px; display: inline-flex; gap: 4px; border: 1px solid #ddd;}
+        .lang-switcher span { transition: opacity 0.2s; }
         
-        .yt-badge { position: absolute; top: 15px; right: 15px; z-index: 1000; background: var(--youtube); color: white; text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; box-shadow: var(--shadow); transition: transform 0.2s; pointer-events: auto; }
+        .yt-badge { position: absolute; top: 12px; right: 10px; z-index: 1000; background: var(--youtube); color: white; text-decoration: none; padding: 8px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; display: flex; align-items: center; gap: 5px; box-shadow: var(--shadow); transition: transform 0.2s; pointer-events: auto; text-align: center;}
         .yt-badge:hover { transform: scale(1.05); }
 
-        /* --- Controls (Layout Gauche & Droite) --- */
-        .top-left-controls { position: absolute; top: 90px; left: 15px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-        .top-right-controls { position: absolute; top: 65px; right: 15px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-        
+        /* --- Controls (Layout) --- */
+        .top-left-controls { position: absolute; top: 75px; left: 10px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+        .top-right-controls { position: absolute; top: 65px; right: 10px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
         .control-group { display: flex; flex-direction: column; gap: 4px; }
-        .top-left-controls .control-group { align-items: flex-start; }
-        .top-right-controls .control-group { align-items: flex-end; }
-        
         .control-label { font-size: 10px; color: #555; background: rgba(255, 255, 255, 0.9); padding: 2px 6px; border-radius: 4px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .custom-btn { width: 44px; height: 44px; background: white; border-radius: 8px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; border: 2px solid rgba(0,0,0,0.05); font-weight: bold; color: var(--dark); }
         
-        .leaflet-control-geocoder { border-radius: 8px !important; box-shadow: var(--shadow) !important; margin: 0 !important; transform-origin: top left; margin-bottom: 6px !important; }
+        /* Barre de recherche optimisée */
+        .leaflet-control-geocoder { border-radius: 8px !important; box-shadow: var(--shadow) !important; margin: 0 !important; margin-bottom: 6px !important; border: 2px solid rgba(0,0,0,0.05) !important;}
+        .leaflet-control-geocoder-form input { font-size: 14px !important; padding: 10px 12px !important; width: 220px !important; max-width: 65vw !important; }
         
         #map { height: 100%; width: 100%; z-index: 1; }
 
-        /* --- Camera Markers on Map --- */
-        .camera-wrapper { position: relative; width: 38px; height: 38px; transform-origin: center center; transition: transform 0.1s linear; }
+        /* --- Camera Markers --- */
+        .camera-wrapper { position: relative; width: 38px; height: 38px; transform-origin: center center; }
         .camera-icon-bg { background: var(--white); border: 2px solid var(--dark); border-radius: 50%; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.3); overflow: hidden; }
-        .camera-delete { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: red; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .camera-delete { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: red; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; border: 2px solid white; }
         .rotation-handle { width: 28px; height: 28px; background: white; border: 2px solid var(--primary); border-radius: 50%; box-shadow: 0 3px 6px rgba(0,0,0,0.3); cursor: grab; display: flex; align-items: center; justify-content: center; }
-        .rotation-handle:active { cursor: grabbing; background: #e6f0ff; }
-        .cone-label { background: rgba(255, 255, 255, 0.9); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; white-space: nowrap; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translate(-50%, -50%); }
-        .label-vision { color: #0055ff; border: 1px solid #0055ff; } .label-pir { color: #666666; border: 1px solid #666666; } .label-flood { color: #e6b800; border: 1px solid #e6b800; }
+        .cone-label { background: rgba(255, 255, 255, 0.9); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translate(-50%, -50%); }
 
-        /* --- Floating Catalog UI --- */
+        /* --- Floating Catalog --- */
         .floating-catalog-wrapper { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; padding-bottom: env(safe-area-inset-bottom); }
+        .camera-carousel { display: flex; gap: 12px; overflow-x: auto; padding: 8px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); cursor: grab; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); max-height: 150px; }
+        .camera-carousel.hidden-carousel { max-height: 0 !important; padding: 0 8px !important; opacity: 0; pointer-events: none; margin: 0; border: none; box-shadow: none;}
+        .camera-carousel::-webkit-scrollbar { height: 6px; }
+        .camera-carousel::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         
-        .camera-carousel { display: flex; gap: 12px; overflow-x: auto; padding: 8px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); scroll-behavior: smooth; -webkit-overflow-scrolling: touch; cursor: grab; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); max-height: 150px; opacity: 1; transform-origin: bottom; }
-        .camera-carousel.hidden-carousel { max-height: 0 !important; padding: 0 8px !important; opacity: 0; border: none; box-shadow: none; pointer-events: none; }
-        .camera-carousel:active { cursor: grabbing; }
-
-        .camera-carousel::-webkit-scrollbar { height: 6px; display: none; } /* Caché par défaut sur mobile */
-        
-        .camera-card { flex: 0 0 auto; width: 95px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; background: white; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s, border-color 0.2s; position: relative; border: 2px solid transparent; user-select: none; }
+        .camera-card { flex: 0 0 auto; width: 95px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; background: white; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s; position: relative; border: 2px solid transparent; }
         .camera-card:hover { border-color: var(--primary); }
-        .camera-card:active { transform: scale(0.95); }
-        .cam-img-cat { height: 32px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 4px; mix-blend-mode: multiply; pointer-events: none;}
-        .cam-placeholder { font-size: 24px; margin-bottom: 4px; display: block; pointer-events: none;}
-        .camera-card .name { font-size: 9px; font-weight: 600; text-align: center; color: #333; line-height: 1.1; pointer-events: none;}
-        .info-btn { position: absolute; top: 2px; right: 2px; background: #e0e0e0; color: #555; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 2;}
+        .cam-img-cat { height: 32px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 4px; mix-blend-mode: multiply; }
+        .camera-card .name { font-size: 9px; font-weight: 600; text-align: center; color: #333; line-height: 1.1;}
+        .info-btn { position: absolute; top: 2px; right: 2px; background: #e0e0e0; color: #555; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; }
 
-        .chips-container { display: flex; gap: 8px; padding: 4px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .chips-container::-webkit-scrollbar { display: none; } /* Masquer scrollbar des chips */
-        
-        .chip { flex: 0 0 auto; background: white; color: #444; border: 1px solid #ddd; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease; }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 85, 255, 0.3); }
-        .chip.active-hidden { background: white; color: var(--primary); border-color: var(--primary); box-shadow: 0 2px 5px rgba(0, 85, 255, 0.2); }
+        /* Chips sur 1 seule ligne défilable (Fix Mobile) */
+        .chips-container { display: flex; gap: 8px; flex-wrap: nowrap; padding: 4px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; align-items: center; }
+        .chips-container::-webkit-scrollbar { display: none; }
+        .chip { flex: 0 0 auto; background: white; color: #444; border: 1px solid #ddd; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .chip.active-hidden { background: white; color: var(--primary); border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
 
-        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -2px; cursor: pointer; text-decoration: underline;}
-
-        /* --- FAB Projet & Toggle OSM (Bas Droite) --- */
-        .bottom-right-btns { position: absolute; bottom: 120px; right: 15px; z-index: 1001; display: flex; flex-direction: column; align-items: center; gap: 15px; pointer-events: none;}
-        .bottom-right-btns > * { pointer-events: auto; }
+        /* --- FAB Projet & Toggle OSM --- */
+        .bottom-right-btns { position: absolute; right: 10px; z-index: 1001; display: flex; flex-direction: column; align-items: center; gap: 15px; bottom: 200px; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         
         #fab-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        #fab-basket { width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; box-shadow: var(--shadow); position: relative; transition: transform 0.2s; }
-        #fab-wrapper:hover #fab-basket { transform: scale(1.05); }
-        #basket-count { position: absolute; top: -4px; right: -4px; background: red; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid white; }
-        .fab-label { font-size: 9px; font-weight: bold; color: var(--dark); background: rgba(255,255,255,0.95); padding: 4px 8px; border-radius: 6px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 1.2;}
+        #fab-basket { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; box-shadow: var(--shadow); position: relative; }
+        #basket-count { position: absolute; top: -3px; right: -3px; background: red; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid white; }
+        .fab-label { font-size: 10px; font-weight: bold; color: var(--dark); background: rgba(255,255,255,0.95); padding: 4px 8px; border-radius: 6px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        .toggle-osm-btn { width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #555; cursor: pointer; border: 2px solid rgba(0,0,0,0.05); }
+        .toggle-osm-btn { width: 44px; height: 44px; background: white; border-radius: 50%; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #555; cursor: pointer; border: 2px solid rgba(0,0,0,0.05); }
         .toggle-osm-btn.active { background: #555; color: white; }
 
         /* --- Modals --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
-        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 80%; border-radius: 15px; padding: 20px; position: relative; overflow-y: auto; }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 85%; border-radius: 15px; padding: 20px; position: relative; overflow-y: auto; }
         .close-modal { position: absolute; top: 15px; right: 15px; font-size: 20px; cursor: pointer; color: #888;}
         .tech-input { width: 45px; padding: 2px 4px; margin: 0 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; text-align: center; color: var(--primary); }
-        .btn-add-map { width: 100%; text-align: center; background: var(--success); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px rgba(40,167,69,0.2); cursor: pointer; margin-bottom: 10px; transition: transform 0.2s;}
-        .btn-add-map:hover { background: #218838; transform: translateY(-2px); }
+        .btn-add-map { width: 100%; text-align: center; background: var(--success); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(40,167,69,0.2); }
         .tag { display: inline-block; background: var(--primary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; margin-right: 5px; margin-bottom: 5px; font-weight: bold; }
-
-        /* --- RESPONSIVE ADJUSTMENTS --- */
-        @media (min-width: 768px) {
-            .chips-container { justify-content: center; flex-wrap: wrap; }
-            .leaflet-control-geocoder { transform: scale(1.2); }
-            .camera-carousel::-webkit-scrollbar { display: block; } /* Afficher scrollbar sur PC */
-            .bottom-right-btns { bottom: 150px; } /* Remonter sur PC */
-        }
-        @media (max-width: 450px) {
-            .header-badge { padding: 8px 12px; max-width: 60%; top: 10px; left: 10px;}
-            .yt-badge { padding: 6px 8px; font-size: 10px; top: 10px; right: 10px;}
-            .top-left-controls { top: 75px; left: 10px; }
-            .top-right-controls { top: 55px; right: 10px; }
-            .bottom-right-btns { bottom: 95px; right: 10px; }
-            .floating-catalog-wrapper { width: 98%; bottom: 10px; }
-        }
+        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -2px; cursor: pointer; text-decoration: underline;}
     </style>
 </head>
 <body>
 
     <div class="header-badge">
         <div class="header-title"><h1><span data-i18n="title">ReoLink Security Planner</span> <span class="beta-tag">BETA</span></h1></div>
-        <div class="author-lang-wrapper">
+        <div class="header-subtitle">
             <span class="author">by Ecoradinmalin</span>
-            <div class="lang-switch" onclick="toggleLang()">
+            <div class="lang-switcher" onclick="toggleLang()" id="lang-btn">
                 <span id="flag-fr">🇫🇷</span> / <span id="flag-en" style="opacity: 0.3;">🇬🇧</span>
             </div>
         </div>
     </div>
-    
     <a href="https://youtube.com/@ecoradinmalin" target="_blank" class="yt-badge">▶ <span data-i18n="ytSub">ECR Tech sur Youtube</span></a>
 
     <div class="top-left-controls">
@@ -139,18 +109,17 @@
     <div class="top-right-controls">
         <div class="control-group">
             <span class="control-label" data-i18n="zoomLabel">Zoom</span>
-            <div style="display: flex; flex-direction: column; box-shadow: var(--shadow); border-radius: 8px; overflow: hidden; border: 2px solid rgba(0,0,0,0.05);">
-                <div class="custom-btn" onclick="map.zoomIn()" style="border-radius: 0; box-shadow: none; border: none; border-bottom: 1px solid #eee; height: 35px; width: 40px; font-size: 18px;">+</div>
-                <div class="custom-btn" onclick="map.zoomOut()" style="border-radius: 0; box-shadow: none; border: none; height: 35px; width: 40px; font-size: 22px;">−</div>
+            <div style="display: flex; flex-direction: column; box-shadow: var(--shadow); border-radius: 8px; overflow: hidden;">
+                <div class="custom-btn" onclick="map.zoomIn()" style="height: 35px; width: 40px; border-radius:0; border-bottom: 1px solid #eee;">+</div>
+                <div class="custom-btn" onclick="map.zoomOut()" style="height: 35px; width: 40px; border-radius:0;">−</div>
             </div>
         </div>
     </div>
 
     <div id="map"></div>
 
-    <div class="bottom-right-btns">
+    <div class="bottom-right-btns" id="action-fabs">
         <div class="toggle-osm-btn" id="osm-toggle" onclick="toggleOSM()">OSM</div>
-        
         <div id="fab-wrapper" onclick="toggleModal('basket-modal')">
             <div id="fab-basket">📓<div id="basket-count">0</div></div>
             <div class="fab-label" data-i18n="projectElements">Éléments<br>du projet</div>
@@ -163,59 +132,11 @@
         <div class="mentions" onclick="toggleModal('cgu-modal')" data-i18n="cgu">Mentions Légales & Affiliation</div>
     </div>
 
-    <div id="basket-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="toggleModal('basket-modal')">×</span>
-            <h2 data-i18n="myProject">Mon Projet</h2>
-            <div id="basket-items">Votre panier est vide.</div>
-            <hr>
-            <div id="basket-total-links" style="display:none; text-align:center;">
-                <a id="global-amz-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; margin-bottom:10px; background:var(--amazon); border-radius:8px; font-weight:bold; color:white; text-decoration:none; box-sizing:border-box;" data-i18n="seeAllAmz">Voir tout sur Amazon</a>
-                <a id="global-reo-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; background:var(--primary); border-radius:8px; font-weight:bold; color:white; text-decoration:none; box-sizing:border-box;" data-i18n="seeAllReo">Voir tout sur Reolink</a>
-            </div>
-        </div>
-    </div>
+    <div id="basket-modal" class="modal"><div class="modal-content"><span class="close-modal" onclick="toggleModal('basket-modal')">×</span><h2 data-i18n="myProject">Mon Projet</h2><div id="basket-items"></div><hr><div id="basket-total-links" style="display:none; text-align:center;"><a id="global-amz-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; margin-bottom:10px; background:var(--amazon); border-radius:8px; font-weight:bold; color:white; text-decoration:none;">Voir tout sur Amazon</a><a id="global-reo-btn" href="#" target="_blank" style="display:block; width:100%; padding:12px; background:var(--primary); border-radius:8px; font-weight:bold; color:white; text-decoration:none;">Voir tout sur Reolink</a></div></div></div>
 
-    <div id="info-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="toggleModal('info-modal')">×</span>
-            <h2 id="info-title" style="margin-top: 0; margin-bottom: 10px;">Nom Caméra</h2>
-            <div id="info-tags" style="margin-bottom: 15px;"></div>
-            <p id="info-desc" style="font-size: 14px; line-height: 1.5; color: #444;"></p>
-            
-            <div style="background: #f4f4f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px;">
-                <strong style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; font-size: 14px;">
-                    <span data-i18n="specs">Spécifications techniques :</span>
-                    <span style="font-size: 10px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; text-align:right;" data-i18n="editable">Modifier les caractéristiques manuellement</span>
-                </strong>
-                📐 <span data-i18n="angle">Angle de vision :</span> <input type="number" id="info-angle" class="tech-input"><strong>°</strong><br>
-                👁️ <span data-i18n="visionMax">Vision globale max :</span> <input type="number" id="info-vision" class="tech-input"><strong>m</strong><br>
-                🏃‍♂️ <span data-i18n="pir">Détection PIR/IA :</span> <input type="number" id="info-pir" class="tech-input"><strong>m</strong><br>
-                💡 <span data-i18n="flood">Éclairage (Floodlight) :</span> <input type="number" id="info-flood" class="tech-input"><strong>m</strong>
-            </div>
-            
-            <div style="text-align: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: var(--dark);" data-i18n="seeTechSpecs">Voir les fiches techniques :</div>
-            
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <a id="info-amz-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--amazon); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(255,153,0,0.2);">Amazon</a>
-                <a id="info-reo-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,85,255,0.2);">Reolink</a>
-            </div>
-            
-            <button id="info-add-map-btn" class="btn-add-map">
-                <span data-i18n="addToMap">Ajouter sur la carte</span> 🎯
-            </button>
-            
-            <a id="info-yt-btn" href="#" target="_blank" style="display:block; text-align:center; background:var(--youtube); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:bold; box-shadow: 0 4px 6px rgba(255,0,0,0.2);">🎬 <span data-i18n="ytBtn">Voir mon test complet</span></a>
-        </div>
-    </div>
+    <div id="info-modal" class="modal"><div class="modal-content"><span class="close-modal" onclick="toggleModal('info-modal')">×</span><h2 id="info-title"></h2><div id="info-tags"></div><p id="info-desc"></p><div style="background: #f4f4f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px;"><strong style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;"><span data-i18n="specs">Spécifications :</span><span style="font-size: 10px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px;" data-i18n="editable">Modifier</span></strong>📐 <span data-i18n="angle">Angle :</span> <input type="number" id="info-angle" class="tech-input">°<br>👁️ <span data-i18n="visionMax">Vision :</span> <input type="number" id="info-vision" class="tech-input">m<br>🏃‍♂️ <span data-i18n="pir">IA :</span> <input type="number" id="info-pir" class="tech-input">m<br>💡 <span data-i18n="flood">Flood :</span> <input type="number" id="info-flood" class="tech-input">m</div><div style="text-align: center; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: var(--dark);" data-i18n="seeTechSpecs">Voir les fiches techniques :</div><div style="display: flex; gap: 10px; margin-bottom: 10px;"><a id="info-amz-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--amazon); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">Amazon</a><a id="info-reo-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">Reolink</a></div><button id="info-add-map-btn" class="btn-add-map"><span data-i18n="addToMap">Ajouter sur la carte</span> 🎯</button><a id="info-yt-btn" href="#" target="_blank" style="display:block; text-align:center; background:var(--youtube); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:bold;">🎬 <span data-i18n="ytBtn">Voir mon test complet</span></a></div></div>
 
-    <div id="cgu-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="toggleModal('cgu-modal')">×</span>
-            <h3 data-i18n="cguTitle">Mentions Légales & CGU</h3>
-            <p style="font-size: 14px; line-height: 1.5;" data-i18n="cguText"></p>
-        </div>
-    </div>
+    <div id="cgu-modal" class="modal"><div class="modal-content"><span class="close-modal" onclick="toggleModal('cgu-modal')">×</span><h3 data-i18n="cguTitle">Mentions Légales</h3><p data-i18n="cguText"></p></div></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
@@ -224,6 +145,203 @@
     <script>
         // --- 1. MOTEUR TRADUCTION & AFFILIATION ---
         const dict = {
-            fr: { title: "ReoLink Security Planner", ytSub: "ECR Tech sur Youtube", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier les caractéristiques manuellement", seeTechSpecs: "Voir les fiches techniques :", addToMap: "Ajouter sur la carte", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
-            en: { title: "ReoLink Security Planner", ytSub: "ECR Tech on Youtube", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Modify specs manually", seeTechSpecs: "View technical specs:", addToMap: "Add to map", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
+            fr: { title: "ReoLink Security Planner", ytSub: "ECR Tech", langLabel: "Langue", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier", seeTechSpecs: "Voir fiches techniques :", addToMap: "Ajouter sur la carte", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Outil gratuit. Liens d'affiliation soutenant Ecoradinmalin. Aucune donnée collectée.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
+            en: { title: "ReoLink Security Planner", ytSub: "ECR Tech", langLabel: "Language", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specs:", angle: "Viewing angle:", visionMax: "Max vision:", pir: "PIR Detection:", flood: "Floodlight:", editable: "Modify", seeTechSpecs: "View specs:", addToMap: "Add to map", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "Free tool. Affiliate links support Ecoradinmalin. No data collected.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
         };
+
+        let currentLang = (navigator.language || navigator.userLanguage).startsWith('fr') ? 'fr' : 'en';
+
+        function updateLangUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[currentLang][key]) el.innerHTML = dict[currentLang][key];
+            });
+            
+            // Mise à jour des drapeaux
+            const flagFr = document.getElementById('flag-fr');
+            const flagEn = document.getElementById('flag-en');
+            if(currentLang === 'fr') { flagFr.style.opacity = '1'; flagEn.style.opacity = '0.3'; } 
+            else { flagFr.style.opacity = '0.3'; flagEn.style.opacity = '1'; }
+            
+            renderChips(); updateBasketUI();
+            
+            const geoInput = document.querySelector('.leaflet-control-geocoder-form input');
+            if(geoInput) geoInput.placeholder = dict[currentLang].search;
+        }
+
+        function toggleLang() { currentLang = currentLang === 'fr' ? 'en' : 'fr'; updateLangUI(); }
+
+        function applyAffiliate(url, type) {
+            if (!url || url === '#') return '#';
+            const connector = url.includes('?') ? '&' : '?';
+            if (type === 'amazon') return url + connector + "tag=ecoradinmalin-21&linkId=6858a062b5e01978d1f0af796bd01b02&ref_=as_li_ss_tl";
+            if (type === 'reolink') return url + connector + "aff=974";
+            return url;
+        }
+
+        // --- 2. INIT CARTE ---
+        const map = L.map('map', { center: [48.8566, 2.3522], zoom: 19, maxZoom: 22, zoomControl: false });
+        
+        const googleStreets = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 22, attribution: '© Google' });
+        const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22, attribution: '© Google' });
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' });
+
+        googleStreets.addTo(map);
+        let isSatellite = false; let useOSM = false;
+
+        function toggleLayer() {
+            if (useOSM) return; 
+            if (isSatellite) { map.removeLayer(googleSat); googleStreets.addTo(map); document.getElementById('layer-btn').innerText = "🗺️"; } 
+            else { map.removeLayer(googleStreets); googleSat.addTo(map); document.getElementById('layer-btn').innerText = "🛰️"; }
+            isSatellite = !isSatellite;
+        }
+
+        function toggleOSM() {
+            const btn = document.getElementById('osm-toggle');
+            if (!useOSM) {
+                map.removeLayer(googleStreets); map.removeLayer(googleSat); osmLayer.addTo(map);
+                btn.classList.add('active'); useOSM = true;
+            } else {
+                map.removeLayer(osmLayer);
+                if (isSatellite) googleSat.addTo(map); else googleStreets.addTo(map);
+                btn.classList.remove('active'); useOSM = false;
+            }
+        }
+
+        const geocoder = L.Control.geocoder({ defaultMarkGeocode: false }).on('markgeocode', e => map.fitBounds(e.geocode.bbox)).addTo(map);
+        const searchGroup = document.createElement('div'); searchGroup.className = 'control-group';
+        searchGroup.innerHTML = '<span class="control-label" data-i18n="search">Rechercher une adresse</span>';
+        searchGroup.appendChild(geocoder.getContainer());
+        document.querySelector('.top-left-controls').prepend(searchGroup);
+
+        // --- 3. MÉCANIQUE CATALOGUE ---
+        let currentFilter = 'toutes';
+        let isCarouselVisible = true;
+        let placedCameras = {};
+        let basket = [];
+        const cameras = appConfig.cameras;
+
+        // Fonction pour ajuster la position des boutons bas-droite
+        function updateLayoutForCarousel() {
+            const fabs = document.getElementById('action-fabs');
+            if (isCarouselVisible) { fabs.style.bottom = "200px"; } 
+            else { fabs.style.bottom = "80px"; }
+        }
+
+        function renderChips() {
+            const container = document.getElementById('chips-container'); container.innerHTML = '';
+            const allCats = [{id:'toutes', name:{fr:'Toutes', en:'All'}}, ...appConfig.categories];
+            allCats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `chip ${currentFilter === cat.id ? (isCarouselVisible ? 'active' : 'active-hidden') : ''}`;
+                btn.textContent = cat.name[currentLang];
+                btn.onclick = () => {
+                    if (currentFilter === cat.id) isCarouselVisible = !isCarouselVisible;
+                    else { currentFilter = cat.id; isCarouselVisible = true; }
+                    renderChips(); renderCamerasList(); updateLayoutForCarousel();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderCamerasList() {
+            const carousel = document.getElementById('camera-results');
+            if (!isCarouselVisible) { carousel.classList.add('hidden-carousel'); return; }
+            carousel.classList.remove('hidden-carousel'); carousel.innerHTML = '';
+            const filtered = currentFilter === 'toutes' ? cameras : cameras.filter(c => c.categoryId === currentFilter);
+            filtered.forEach(cam => {
+                const card = document.createElement('div'); card.className = 'camera-card';
+                const img = (cam.img && cam.img !== '') ? `<img src="${cam.img}" class="cam-img-cat">` : `<span class="cam-placeholder">📹</span>`;
+                card.innerHTML = `<div class="info-btn">i</div>${img}<span class="name">${cam.name}</span>`;
+                card.onclick = () => showCameraInfo(cam.id);
+                carousel.appendChild(card);
+            });
+        }
+
+        const slider = document.getElementById('camera-results');
+        let isDown = false; let startX; let scrollLeft;
+        slider.addEventListener('mousedown', e => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
+        slider.addEventListener('mouseleave', () => isDown = false);
+        slider.addEventListener('mouseup', () => isDown = false);
+        slider.addEventListener('mousemove', e => { if(!isDown) return; e.preventDefault(); slider.scrollLeft = scrollLeft - (e.pageX - slider.offsetLeft - startX) * 2; });
+
+        function showCameraInfo(camId) {
+            const cam = cameras.find(c => c.id === camId);
+            document.getElementById('info-title').innerText = cam.name;
+            document.getElementById('info-desc').innerText = cam.desc[currentLang];
+            document.getElementById('info-tags').innerHTML = cam.tags[currentLang].map(t => `<span class="tag">${t}</span>`).join('');
+            ['angle','vision','pir','flood'].forEach(k => {
+                const input = document.getElementById('info-'+k);
+                const key = k === 'vision' ? 'visionRange' : k+'Range';
+                input.value = cam[key] || cam.angle;
+                input.oninput = e => { cam[key] = parseFloat(e.target.value); Object.values(placedCameras).forEach(pc => { if(pc.camId === cam.id) pc.updateFn(); }); };
+            });
+            document.getElementById('info-amz-btn').href = applyAffiliate(cam.amzLink, 'amazon');
+            document.getElementById('info-reo-btn').href = applyAffiliate(cam.reoLink, 'reolink');
+            document.getElementById('info-add-map-btn').onclick = () => { addCameraToMap(cam); toggleModal('info-modal'); };
+            const yt = document.getElementById('info-yt-btn'); if(cam.ytLink) { yt.style.display='block'; yt.href=cam.ytLink; } else yt.style.display='none';
+            toggleModal('info-modal');
+        }
+
+        function addCameraToMap(camData) {
+            const id = 'cam_' + Date.now(); const center = map.getCenter(); let heading = 180;
+            const img = (camData.img && camData.img !== '') ? `<img src="${camData.img}" style="width:100%;height:100%;object-fit:cover;">` : `📹`;
+            const html = `<div class="camera-wrapper" id="w_${id}"><div class="camera-icon-bg">${img}</div><div class="camera-delete" onclick="event.stopPropagation(); removeCamera('${id}')">✖</div></div>`;
+            const marker = L.marker(center, { icon: L.divIcon({ html: html, iconSize:[38,38], iconAnchor:[19,19] }), draggable:true }).addTo(map);
+            
+            const polys = [L.polygon([],{color:'#0055ff',fillOpacity:0.05}).addTo(map), L.polygon([],{color:'#e6b800',dashArray:'5,5',fillOpacity:0.1}).addTo(map), L.polygon([],{color:'#666666',fillOpacity:0.15}).addTo(map)];
+            const handle = L.marker(center, { icon: L.divIcon({ className:'rotation-handle', html:'🔄', iconSize:[28,28] }), draggable:true }).addTo(map);
+
+            function update() {
+                const pos = marker.getLatLng();
+                const draw = (p, d) => {
+                    const pts = [[pos.lat, pos.lng]];
+                    for(let i=0; i<=15; i++) {
+                        const b = (heading - camData.angle/2) + (i * camData.angle/15);
+                        const R = 6378137, lat = pos.lat*Math.PI/180, lng = pos.lng*Math.PI/180, br = b*Math.PI/180, dr = d/R;
+                        const la2 = Math.asin(Math.sin(lat)*Math.cos(dr)+Math.cos(lat)*Math.sin(dr)*Math.cos(br));
+                        const ln2 = lng+Math.atan2(Math.sin(br)*Math.sin(dr)*Math.cos(lat), Math.cos(dr)-Math.sin(lat)*Math.sin(la2));
+                        pts.push([la2*180/Math.PI, ln2*180/Math.PI]);
+                    }
+                    p.setLatLngs(pts);
+                };
+                draw(polys[0], camData.visionRange); draw(polys[1], camData.floodRange); draw(polys[2], camData.pirRange);
+                const hDist = camData.visionRange + 3;
+                const br = heading*Math.PI/180, dr = hDist/6378137, lat = pos.lat*Math.PI/180, lng = pos.lng*Math.PI/180;
+                const hLa = Math.asin(Math.sin(lat)*Math.cos(dr)+Math.cos(lat)*Math.sin(dr)*Math.cos(br));
+                const hLn = lng+Math.atan2(Math.sin(br)*Math.sin(dr)*Math.cos(lat), Math.cos(dr)-Math.sin(lat)*Math.sin(hLa));
+                handle.setLatLng([hLa*180/Math.PI, hLn*180/Math.PI]);
+                document.getElementById('w_'+id).style.transform = `rotate(${heading+90}deg)`;
+            }
+
+            marker.on('drag', update);
+            handle.on('drag', e => {
+                const c = map.latLngToLayerPoint(marker.getLatLng()), h = map.latLngToLayerPoint(e.latlng);
+                heading = Math.atan2(h.x - c.x, c.y - h.y) * 180 / Math.PI; if(heading<0) heading+=360; update();
+            });
+            update(); placedCameras[id] = { camId: camData.id, updateFn: update, marker, handle, polys };
+            basket.push({ ...camData, uniqueId: id }); updateBasketCount();
+        }
+
+        function removeCamera(id) {
+            const c = placedCameras[id]; map.removeLayer(c.marker); map.removeLayer(c.handle); c.polys.forEach(p => map.removeLayer(p));
+            delete placedCameras[id]; basket = basket.filter(b => b.uniqueId !== id); updateBasketCount();
+        }
+
+        function updateBasketCount() {
+            document.getElementById('basket-count').innerText = basket.length;
+            const container = document.getElementById('basket-items');
+            if(basket.length === 0) { container.innerHTML = dict[currentLang].cartEmpty; document.getElementById('basket-total-links').style.display='none'; return; }
+            container.innerHTML = basket.map(b => `<div style="display:flex; justify-content:space-between; margin-bottom:10px; background:#f9f9f9; padding:8px; border-radius:8px;"><span>${b.name}</span><button onclick="removeCamera('${b.uniqueId}')" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">×</button></div>`).join('');
+            document.getElementById('basket-total-links').style.display = 'block';
+        }
+
+        function toggleModal(id) { const m = document.getElementById(id); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
+
+        // Lancement Initial
+        document.getElementById('global-amz-btn').href = applyAffiliate(appConfig.globalLinks.amazon, 'amazon');
+        document.getElementById('global-reo-btn').href = applyAffiliate(appConfig.globalLinks.reolink, 'reolink');
+        updateLangUI(); renderCamerasList(); updateLayoutForCarousel();
+    </script>
+</body>
+</html>
