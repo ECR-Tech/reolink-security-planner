@@ -54,7 +54,23 @@
             cursor: grab;
         }
         .camera-carousel:active { cursor: grabbing; }
-        .camera-carousel::-webkit-scrollbar { display: none; }
+
+        /* Ascenseur horizontal personnalisé (Scrollbar) */
+        .camera-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .camera-carousel::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin: 0 10px;
+        }
+        .camera-carousel::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        .camera-carousel::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
         
         .camera-card {
             flex: 0 0 auto; width: 110px; height: 110px; display: flex; flex-direction: column;
@@ -71,7 +87,6 @@
         .info-btn { position: absolute; top: 4px; right: 4px; background: #e0e0e0; color: #555; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 2;}
         .info-btn:hover { background: #ccc; }
 
-        /* NOUVEAU : Chips sur plusieurs lignes */
         .chips-container { 
             display: flex; gap: 8px; flex-wrap: wrap; padding: 4px; 
             justify-content: center; align-items: center;
@@ -110,7 +125,7 @@
         <span class="author">by Ecoradinmalin</span>
     </div>
     
-    <a href="https://youtube.com/@ecoradinmalin" target="_blank" class="yt-badge">▶ <span data-i18n="ytSub">Ma Chaîne</span></a>
+    <a href="https://youtube.com/@ecoradinmalin" target="_blank" class="yt-badge">▶ <span data-i18n="ytSub">ECR Tech sur Youtube</span></a>
 
     <div class="top-right-controls">
         <div class="control-group">
@@ -208,8 +223,8 @@
     <script>
         // --- 1. MOTEUR DE TRADUCTION ---
         const dict = {
-            fr: { title: "ReoLink Security Planner", ytSub: "Ma Chaîne", langLabel: "Langue", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier les caractéristiques manuellement", seeTechSpecs: "Voir les fiches techniques :", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
-            en: { title: "ReoLink Security Planner", ytSub: "My Channel", langLabel: "Language", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Modify specs manually", seeTechSpecs: "View technical specs:", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
+            fr: { title: "ReoLink Security Planner", ytSub: "ECR Tech sur Youtube", langLabel: "Langue", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier les caractéristiques manuellement", seeTechSpecs: "Voir les fiches techniques :", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
+            en: { title: "ReoLink Security Planner", ytSub: "ECR Tech on Youtube", langLabel: "Language", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Modify specs manually", seeTechSpecs: "View technical specs:", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
         };
 
         let currentLang = (navigator.language || navigator.userLanguage).startsWith('fr') ? 'fr' : 'en';
@@ -256,7 +271,7 @@
             }
         }
 
-        // --- 3. INIT CARTE (Zoom natif désactivé car recréé) ---
+        // --- 3. INIT CARTE ---
         const map = L.map('map', { center: [48.8566, 2.3522], zoom: 19, maxZoom: 22, zoomControl: false });
         const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 22, maxNativeZoom: 19 }).addTo(map);
         const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22, maxNativeZoom: 19 });
