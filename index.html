@@ -1,309 +1,246 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ReoLink Security Planner</title>
-  
-  <style>
-    /* Reset de base et typographie */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ReoLink Security Planner BETA</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* Reset de base pour supprimer les marges par défaut */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { width: 100vw; height: 100dvh; overflow: hidden; background-color: #f4f4f4; }
+        
+        /* En-tête (Header) */
+        header {
+            position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+            background: white; z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-title { font-weight: bold; font-size: 18px; color: #333; display: flex; align-items: center; gap: 10px;}
+        .beta-tag { background: #e53935; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold;}
+        .author { font-size: 12px; color: #0066cc; display: block; font-weight: normal; margin-top: 2px; text-decoration: none;}
+        .btn-youtube { background: #cc0000; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;}
+        
+        /* Conteneur de la carte */
+        #map { width: 100%; height: calc(100dvh - 60px); margin-top: 60px; z-index: 1; }
 
-    body {
-      background-color: #f0f0f0; /* Couleur de fond en attendant ta carte */
-      overflow: hidden; /* Empêche le scroll de la page entière */
-      height: 100dvh; /* Utilise dvh pour s'adapter dynamiquement sur mobile */
-      display: flex;
-      flex-direction: column;
-    }
+        /* Contrôles flottants à droite */
+        .map-controls {
+            position: absolute; top: 80px; right: 20px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .control-btn {
+            background: white; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; text-align: center; font-size: 12px; font-weight: bold;
+        }
 
-    /* --- EN-TÊTE (Top Bar) --- */
-    header {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: env(safe-area-inset-top) 16px 12px 16px; /* Gère l'encoche iPhone */
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+        /* Le conteneur du Catalogue Flottant (en bas) */
+        .floating-catalog-wrapper {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
+            /* FIX iOS */
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* Carrousel des caméras */
+        .camera-carousel {
+            display: flex; gap: 16px; overflow-x: auto; padding: 12px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
+        }
+        .camera-carousel::-webkit-scrollbar, .chips-container::-webkit-scrollbar { display: none; }
+        
+        /* Cartes de caméras individuelles */
+        .camera-card {
+            flex: 0 0 auto; width: 110px; height: 110px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 8px; background: white;
+            border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: grab;
+            scroll-snap-align: start; transition: transform 0.2s, border-color 0.2s; position: relative; border: 2px solid transparent;
+        }
+        .camera-card:hover { border-color: #e53935; }
+        .camera-card:active { cursor: grabbing; transform: scale(0.95); }
+        .camera-icon { width: 50px; height: 50px; background: #f0f0f0; border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px;}
+        .camera-card span { font-size: 10px; font-weight: 600; text-align: center; color: #333; line-height: 1.2;}
+        .info-btn { position: absolute; top: 4px; right: 4px; background: #e0e0e0; color: #555; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;}
+        
+        /* Barre des catégories (Chips) */
+        .chips-container { display: flex; gap: 8px; overflow-x: auto; padding: 4px; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
+        /* Centrage sur grand écran */
+        @media (min-width: 768px) { .chips-container { justify-content: center; } }
+        
+        .chip {
+            flex: 0 0 auto; background: white; color: #444; border: 1px solid #ddd; padding: 8px 18px;
+            border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;
+        }
+        .chip.active { background: #e53935; color: white; border-color: #e53935; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); }
 
-    .brand h1 {
-      font-size: 16px;
-      color: #333;
-    }
-    
-    .brand .badge {
-      background: #E52E2D;
-      color: white;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      vertical-align: middle;
-      margin-left: 4px;
-    }
-
-    .brand p {
-      font-size: 11px;
-      color: #666;
-    }
-
-    .btn-channel {
-      background: #E52E2D;
-      color: white;
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 5px rgba(229, 46, 45, 0.3);
-    }
-
-    /* --- ZONE DE LA CARTE --- */
-    #map-container {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      /* C'est ici que tu initialiseras Leaflet ou Google Maps */
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><rect width="100" height="100" fill="none" stroke="%23000" stroke-width="1"/></svg>');
-    }
-
-    /* --- CATALOGUE FLOTTANT (Bottom UI) --- */
-    .floating-catalog-wrapper {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 95%;
-      max-width: 800px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: env(safe-area-inset-bottom); /* Gère la barre d'accueil iPhone */
-    }
-
-    /* Barre des catégories (Chips) */
-    .chips-container {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox */
-    }
-
-    .chips-container::-webkit-scrollbar {
-      display: none; /* Chrome/Safari */
-    }
-
-    .chip {
-      flex: 0 0 auto;
-      background: white;
-      color: #444;
-      border: 1px solid #e0e0e0;
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: all 0.2s ease;
-    }
-
-    .chip.active {
-      background: #E52E2D; 
-      color: white;
-      border-color: #E52E2D;
-      box-shadow: 0 4px 10px rgba(229, 46, 45, 0.3);
-    }
-
-    /* Carrousel des caméras */
-    .camera-carousel {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-    }
-
-    .camera-carousel::-webkit-scrollbar {
-      display: none;
-    }
-
-    .camera-card {
-      flex: 0 0 auto;
-      width: 110px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 8px;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #f0f0f0;
-      cursor: grab;
-      scroll-snap-align: start;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      user-select: none; /* Empêche la sélection de texte lors du drag */
-    }
-
-    .camera-card:active {
-      cursor: grabbing;
-      transform: scale(0.95);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .camera-card img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-      pointer-events: none; /* Empêche le navigateur de vouloir glisser l'image elle-même */
-    }
-
-    .camera-card span {
-      font-size: 11px;
-      font-weight: 600;
-      text-align: center;
-      margin-top: 8px;
-      color: #333;
-      line-height: 1.2;
-    }
-
-    /* Mention Légale discrète sous le catalogue */
-    .legal-notice {
-      text-align: center;
-      font-size: 10px;
-      color: #666;
-      margin-top: 4px;
-    }
-  </style>
+        /* Mentions en bas */
+        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -4px;}
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <h1>ReoLink Security Planner <span class="badge">BETA</span></h1>
-      <p>by Ecoradinmalin</p>
-    </div>
-    <a href="#" class="btn-channel">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      Ma Chaîne
-    </a>
-  </header>
+    <header>
+        <div>
+            <div class="header-title">ReoLink Security Planner <span class="beta-tag">BETA</span></div>
+            <a href="#" class="author">by Ecoradinmalin</a>
+        </div>
+        <a href="#" id="btn-youtube-link" class="btn-youtube" target="_blank">▶ Ma Chaîne</a>
+    </header>
 
-  <div id="map-container">
+    <div class="map-controls">
+        <div class="control-btn">🔍 Rechercher une adresse</div>
+        <div class="control-btn" style="text-align: center;">EN</div>
+        <div class="control-btn" style="text-align: center;">🗺️ Carte / Satellite</div>
     </div>
 
-  <div class="floating-catalog-wrapper">
+    <div id="map"></div>
+
+    <div class="floating-catalog-wrapper">
+        <div id="camera-results" class="camera-carousel">
+            </div>
+
+        <div class="chips-container" id="chips-container">
+            </div>
+        
+        <div class="mentions">Mentions Légales & Affiliation</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <div class="chips-container" id="category-chips">
-      <button class="chip active" data-category="toutes">Toutes</button>
-      <button class="chip" data-category="poe">PoE</button>
-      <button class="chip" data-category="wifi">WiFi</button>
-      <button class="chip" data-category="batterie">Sur Batterie</button>
-      <button class="chip" data-category="ptz">PTZ</button>
-    </div>
+    <script src="config.js"></script>
 
-    <div id="camera-results" class="camera-carousel">
-      </div>
+    <script>
+        // Vérification de la présence de config.js
+        if (typeof appConfig === 'undefined') {
+            console.error("Erreur : Le fichier config.js n'a pas été chargé.");
+        }
 
-    <div class="legal-notice">Mentions Légales & Affiliation</div>
-  </div>
+        // --- 1. INITIALISATION DE LA CARTE ---
+        const map = L.map('map', {zoomControl: false}).setView([48.8566, 2.3522], 17);
+        L.control.zoom({ position: 'bottomleft' }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 20
+        }).addTo(map);
 
-  <script>
-    // Base de données simulée des caméras (remplace les liens d'images par les tiens)
-    const cameraData = [
-      { id: 'rlc-811wa', name: 'RLC-811WA', category: 'wifi', img: 'https://placehold.co/100x100/eeeeee/333333?text=RLC-811WA' },
-      { id: 'rlc-843wa', name: 'RLC-843WA', category: 'wifi', img: 'https://placehold.co/100x100/eeeeee/333333?text=RLC-843WA' },
-      { id: 'duo-3-wifi', name: 'Reolink Duo 3 WiFi', category: 'wifi', img: 'https://placehold.co/100x100/eeeeee/333333?text=Duo+3' },
-      { id: 'trackmix-poe', name: 'TrackMix PoE', category: 'poe', img: 'https://placehold.co/100x100/eeeeee/333333?text=TrackMix' },
-      { id: 'rlc-810a', name: 'RLC-810A', category: 'poe', img: 'https://placehold.co/100x100/eeeeee/333333?text=RLC-810A' },
-      { id: 'argus-pt', name: 'Argus PT Ultra', category: 'batterie', img: 'https://placehold.co/100x100/eeeeee/333333?text=Argus+PT' },
-      { id: 'solar-flood', name: 'Solar Floodlight Cam', category: 'batterie', img: 'https://placehold.co/100x100/eeeeee/333333?text=Solar+Cam' }
-    ];
+        // --- 2. LIAISON DES LIENS GLOBAUX ---
+        // Exemple: rediriger le bouton Youtube vers ta chaine ou la boutique globale
+        document.getElementById('btn-youtube-link').href = appConfig.globalLinks.reolink;
 
-    const cameraResultsContainer = document.getElementById('camera-results');
-    const chips = document.querySelectorAll('.chip');
-
-    // Moteur d'affichage
-    function renderCameras(filterCategory) {
-      cameraResultsContainer.innerHTML = ''; // On vide le carrousel
-
-      // Filtrage
-      const filteredCameras = filterCategory === 'toutes' 
-        ? cameraData 
-        : cameraData.filter(cam => cam.category === filterCategory);
-
-      // Création des éléments DOM
-      filteredCameras.forEach(cam => {
-        const camElement = document.createElement('div');
-        camElement.className = 'camera-card';
+        // --- 3. GÉNÉRATION DES CATÉGORIES (Chips) ---
+        const chipsContainer = document.getElementById('chips-container');
         
-        // Attributs essentiels pour le Drag & Drop sur la carte
-        camElement.setAttribute('draggable', 'true'); 
-        camElement.setAttribute('data-id', cam.id);
-        
-        camElement.innerHTML = `
-          <img src="${cam.img}" alt="${cam.name}">
-          <span>${cam.name}</span>
-        `;
-        
-        // Exemple d'événement DragStart à relier à ton script de carte
-        camElement.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', cam.id);
-          // Optionnel : style pendant le drag
-          camElement.style.opacity = '0.5';
+        // Bouton "Toutes" par défaut
+        const btnToutes = document.createElement('button');
+        btnToutes.className = 'chip active';
+        btnToutes.setAttribute('data-category', 'toutes');
+        btnToutes.textContent = 'Toutes';
+        chipsContainer.appendChild(btnToutes);
+
+        // Boucle sur les catégories du config.js
+        appConfig.categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'chip';
+            btn.setAttribute('data-category', cat.id);
+            btn.textContent = cat.name.fr; // Utilise le nom en français
+            chipsContainer.appendChild(btn);
         });
 
-        camElement.addEventListener('dragend', (e) => {
-          camElement.style.opacity = '1';
+        // --- 4. AFFICHAGE DES CAMÉRAS ---
+        const carousel = document.getElementById('camera-results');
+
+        function renderCameras(filterId) {
+            carousel.innerHTML = '';
+            
+            // Filtre depuis appConfig.cameras
+            const filtered = filterId === 'toutes' 
+                ? appConfig.cameras 
+                : appConfig.cameras.filter(c => c.categoryId === filterId);
+
+            filtered.forEach(cam => {
+                const card = document.createElement('div');
+                card.className = 'camera-card';
+                card.setAttribute('draggable', 'true'); 
+                
+                // Données envoyées lors du Drag & Drop
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('application/json', JSON.stringify(cam));
+                    card.style.opacity = '0.5';
+                });
+                card.addEventListener('dragend', (e) => {
+                    card.style.opacity = '1';
+                });
+
+                // Si cam.img est vide, on affiche l'émoji, sinon l'image
+                const imgHTML = cam.img !== '' 
+                    ? `<img src="${cam.img}" alt="${cam.name}" style="width:50px; height:50px; object-fit:contain; margin-bottom:6px;">`
+                    : `<div class="camera-icon">🎥</div>`;
+
+                card.innerHTML = `
+                    <div class="info-btn" title="${cam.desc.fr}">i</div>
+                    ${imgHTML}
+                    <span>${cam.name}</span>
+                `;
+                carousel.appendChild(card);
+            });
+        }
+
+        // --- 5. GESTION DES CLICS SUR LES CHIPS ---
+        // On doit re-sélectionner les chips car ils viennent d'être générés
+        const allChips = document.querySelectorAll('.chip');
+        
+        allChips.forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                allChips.forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                renderCameras(e.target.getAttribute('data-category'));
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            });
         });
 
-        cameraResultsContainer.appendChild(camElement);
-      });
-      
-      // Remet le scroll à gauche quand on change de catégorie
-      cameraResultsContainer.scrollLeft = 0;
-    }
-
-    // Gestionnaires d'événements pour les Chips
-    chips.forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        // MAJ de l'UI des boutons
-        chips.forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
+        // --- 6. GESTION DU DROP SUR LA CARTE ---
+        const mapContainer = document.getElementById('map');
         
-        // Rafraîchissement du catalogue
-        const category = e.target.getAttribute('data-category');
-        renderCameras(category);
-      });
-    });
+        mapContainer.addEventListener('dragover', (e) => {
+            e.preventDefault(); 
+        });
 
-    // Initialisation au premier chargement
-    renderCameras('toutes');
-  </script>
+        mapContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const camDataString = e.dataTransfer.getData('application/json');
+            
+            if(camDataString) {
+                const cam = JSON.parse(camDataString);
+                const latlng = map.mouseEventToLatLng(e);
+                
+                const markerIcon = L.divIcon({
+                    html: '<div style="background:white;border-radius:50%;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,0.3);text-align:center;font-size:16px;">🎥</div>',
+                    className: 'custom-map-icon',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+
+                // Popup riche utilisant les données de config.js
+                const popupContent = `
+                    <div style="text-align:center;">
+                        <b>${cam.name}</b><br>
+                        <span style="font-size:11px; color:#666;">Angle: ${cam.angle}° | Vision: ${cam.visionRange}m</span><br>
+                        <a href="${cam.amzLink || cam.reoLink}" target="_blank" style="display:inline-block; margin-top:5px; background:#ff9900; color:white; padding:3px 8px; border-radius:4px; text-decoration:none; font-size:11px;">Voir l'offre</a>
+                    </div>
+                `;
+
+                L.marker(latlng, { icon: markerIcon, draggable: true })
+                 .addTo(map)
+                 .bindPopup(popupContent)
+                 .openPopup();
+            }
+        });
+
+        // Lancement initial : affiche toutes les caméras
+        renderCameras('toutes');
+    </script>
 </body>
 </html>
