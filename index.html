@@ -42,38 +42,54 @@
         /* --- Floating Catalog UI --- */
         .floating-catalog-wrapper {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
+            width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; /* Écart réduit */
             padding-bottom: env(safe-area-inset-bottom);
         }
         
+        /* Animation fluide pour masquer/afficher */
         .camera-carousel {
-            display: flex; gap: 16px; overflow-x: auto; padding: 12px;
+            display: flex; gap: 12px; overflow-x: auto; padding: 8px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
             cursor: grab;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            max-height: 150px; 
+            opacity: 1;
+            transform-origin: bottom;
         }
+        
+        .camera-carousel.hidden-carousel {
+            max-height: 0 !important;
+            padding: 0 8px !important;
+            opacity: 0;
+            border: none;
+            box-shadow: none;
+            pointer-events: none;
+        }
+
         .camera-carousel:active { cursor: grabbing; }
 
         /* Ascenseur horizontal personnalisé (Scrollbar) */
-        .camera-carousel::-webkit-scrollbar { height: 8px; }
+        .camera-carousel::-webkit-scrollbar { height: 6px; }
         .camera-carousel::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; margin: 0 10px; }
         .camera-carousel::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         .camera-carousel::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
+        /* Réduction de 30% de la hauteur des cartes */
         .camera-card {
-            flex: 0 0 auto; width: 110px; height: 110px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 8px; background: white;
-            border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer;
+            flex: 0 0 auto; width: 95px; height: 80px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 6px; background: white;
+            border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); cursor: pointer;
             transition: transform 0.2s, border-color 0.2s; position: relative; border: 2px solid transparent;
             user-select: none;
         }
         .camera-card:hover { border-color: var(--primary); }
         .camera-card:active { transform: scale(0.95); }
-        .cam-img-cat { height: 45px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 8px; mix-blend-mode: multiply; pointer-events: none;}
-        .cam-placeholder { font-size: 30px; margin-bottom: 5px; display: block; pointer-events: none;}
-        .camera-card .name { font-size: 10px; font-weight: 600; text-align: center; color: #333; line-height: 1.2; pointer-events: none;}
-        .info-btn { position: absolute; top: 4px; right: 4px; background: #e0e0e0; color: #555; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 2;}
+        .cam-img-cat { height: 32px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 4px; mix-blend-mode: multiply; pointer-events: none;}
+        .cam-placeholder { font-size: 24px; margin-bottom: 4px; display: block; pointer-events: none;}
+        .camera-card .name { font-size: 9px; font-weight: 600; text-align: center; color: #333; line-height: 1.1; pointer-events: none;}
+        .info-btn { position: absolute; top: 2px; right: 2px; background: #e0e0e0; color: #555; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 2;}
         .info-btn:hover { background: #ccc; }
 
         .chips-container { 
@@ -82,19 +98,22 @@
         }
         
         .chip {
-            flex: 0 0 auto; background: white; color: #444; border: 1px solid #ddd; padding: 8px 16px;
-            border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer;
+            flex: 0 0 auto; background: white; color: #444; border: 1px solid #ddd; padding: 6px 14px;
+            border-radius: 30px; font-size: 11px; font-weight: 600; cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;
         }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 85, 255, 0.3); }
+        
+        /* Style spécial quand la catégorie est sélectionnée mais le catalogue est masqué */
+        .chip.active-hidden { background: white; color: var(--primary); border-color: var(--primary); box-shadow: 0 2px 5px rgba(0, 85, 255, 0.2); }
 
-        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -4px; cursor: pointer; text-decoration: underline;}
+        .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -2px; cursor: pointer; text-decoration: underline;}
 
         /* --- FAB Cahier (Projet) --- */
-        #fab-wrapper { position: absolute; bottom: 200px; right: 15px; z-index: 1001; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        #fab-basket { width: 56px; height: 56px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: var(--shadow); transition: transform 0.2s; position: relative; }
+        #fab-wrapper { position: absolute; bottom: 180px; right: 15px; z-index: 1001; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        #fab-basket { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; box-shadow: var(--shadow); transition: transform 0.2s; position: relative; }
         #fab-wrapper:hover #fab-basket { transform: scale(1.05); }
-        #basket-count { position: absolute; top: -3px; right: -3px; background: red; color: white; font-size: 12px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid white;}
+        #basket-count { position: absolute; top: -3px; right: -3px; background: red; color: white; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid white;}
         .fab-label { font-size: 10px; font-weight: bold; color: var(--dark); background: rgba(255,255,255,0.95); padding: 4px 8px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; line-height: 1.2; }
 
         /* --- Modals --- */
@@ -294,22 +313,23 @@
 
         function toggleModal(id) { const modal = document.getElementById(id); modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex'; }
 
-        // --- 4. CATALOGUE ET CHIPS ---
+        // --- 4. CATALOGUE ET CHIPS (AVEC TOGGLE) ---
         let currentFilter = 'toutes';
+        let isCarouselVisible = true; // État de visibilité du bandeau
 
         function renderChips() {
             const container = document.getElementById('chips-container');
             container.innerHTML = '';
             
             const btnToutes = document.createElement('button');
-            btnToutes.className = `chip ${currentFilter === 'toutes' ? 'active' : ''}`;
+            btnToutes.className = `chip ${currentFilter === 'toutes' ? (isCarouselVisible ? 'active' : 'active-hidden') : ''}`;
             btnToutes.setAttribute('data-category', 'toutes');
             btnToutes.textContent = currentLang === 'fr' ? 'Toutes' : 'All';
             container.appendChild(btnToutes);
 
             appConfig.categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `chip ${currentFilter === cat.id ? 'active' : ''}`;
+                btn.className = `chip ${currentFilter === cat.id ? (isCarouselVisible ? 'active' : 'active-hidden') : ''}`;
                 btn.setAttribute('data-category', cat.id);
                 btn.textContent = cat.name[currentLang];
                 container.appendChild(btn);
@@ -317,9 +337,18 @@
 
             document.querySelectorAll('.chip').forEach(chip => {
                 chip.addEventListener('click', (e) => {
-                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                    e.target.classList.add('active');
-                    currentFilter = e.target.getAttribute('data-category');
+                    const clickedCategory = e.target.getAttribute('data-category');
+                    
+                    if (currentFilter === clickedCategory) {
+                        // Si on clique sur la catégorie déjà active, on bascule la visibilité
+                        isCarouselVisible = !isCarouselVisible;
+                    } else {
+                        // Si on clique sur une nouvelle catégorie, on l'active et on force l'affichage
+                        currentFilter = clickedCategory;
+                        isCarouselVisible = true;
+                    }
+                    
+                    renderChips();
                     renderCamerasList();
                 });
             });
@@ -327,6 +356,14 @@
 
         function renderCamerasList() {
             const carousel = document.getElementById('camera-results');
+            
+            if (!isCarouselVisible) {
+                carousel.classList.add('hidden-carousel');
+                return; // Pas besoin de vider le contenu, juste le cacher
+            } else {
+                carousel.classList.remove('hidden-carousel');
+            }
+
             carousel.innerHTML = '';
             
             const filtered = currentFilter === 'toutes' 
@@ -340,10 +377,7 @@
                     `<span class="cam-placeholder">📹</span>`;
 
                 card.innerHTML = `<div class="info-btn">i</div>${imageHtml}<span class="name">${cam.name}</span>`;
-                
-                // MODIFICATION : Clic sur la carte ouvre la fiche info au lieu de placer directement
                 card.onclick = () => showCameraInfo(cam.id);
-                
                 carousel.appendChild(card);
             });
             carousel.scrollTo({ left: 0, behavior: 'smooth' });
@@ -388,11 +422,10 @@
             document.getElementById('info-amz-btn').href = applyAffiliate(cam.amzLink, 'amazon');
             document.getElementById('info-reo-btn').href = applyAffiliate(cam.reoLink, 'reolink');
             
-            // MODIFICATION : Action du bouton "Ajouter sur la carte"
             const addMapBtn = document.getElementById('info-add-map-btn');
             addMapBtn.onclick = () => {
                 addCameraToMap(cam);
-                toggleModal('info-modal'); // Ferme la popup automatiquement
+                toggleModal('info-modal'); 
             };
 
             const ytBtn = document.getElementById('info-yt-btn');
