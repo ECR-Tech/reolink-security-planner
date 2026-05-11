@@ -21,12 +21,19 @@
         .yt-badge { position: absolute; top: 15px; right: 15px; z-index: 1000; background: var(--youtube); color: white; text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; box-shadow: var(--shadow); transition: transform 0.2s; pointer-events: auto; }
         .yt-badge:hover { transform: scale(1.05); }
 
-        /* --- Controls (Top Right) --- */
+        /* --- Controls (Layout Gauche & Droite) --- */
+        .top-left-controls { position: absolute; top: 80px; left: 15px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
         .top-right-controls { position: absolute; top: 65px; right: 15px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-        .control-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        
+        .control-group { display: flex; flex-direction: column; gap: 4px; }
+        .top-left-controls .control-group { align-items: flex-start; }
+        .top-right-controls .control-group { align-items: flex-end; }
+        
         .control-label { font-size: 10px; color: #555; background: rgba(255, 255, 255, 0.9); padding: 2px 6px; border-radius: 4px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .custom-btn { width: 44px; height: 44px; background: white; border-radius: 8px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; border: 2px solid rgba(0,0,0,0.05); font-weight: bold; color: var(--dark); }
-        .leaflet-control-geocoder { border-radius: 8px !important; box-shadow: var(--shadow) !important; margin: 0 !important; }
+        
+        /* Agrandissement spécifique pour la barre de recherche (Leaflet Geocoder) */
+        .leaflet-control-geocoder { border-radius: 8px !important; box-shadow: var(--shadow) !important; margin: 0 !important; transform: scale(1.2); transform-origin: top left; margin-bottom: 6px !important; }
         
         #map { height: 100%; width: 100%; z-index: 1; }
 
@@ -42,7 +49,7 @@
         /* --- Floating Catalog UI --- */
         .floating-catalog-wrapper {
             position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; /* Écart réduit */
+            width: 95%; max-width: 900px; z-index: 1000; display: flex; flex-direction: column; gap: 8px;
             padding-bottom: env(safe-area-inset-bottom);
         }
         
@@ -59,15 +66,7 @@
             transform-origin: bottom;
         }
         
-        .camera-carousel.hidden-carousel {
-            max-height: 0 !important;
-            padding: 0 8px !important;
-            opacity: 0;
-            border: none;
-            box-shadow: none;
-            pointer-events: none;
-        }
-
+        .camera-carousel.hidden-carousel { max-height: 0 !important; padding: 0 8px !important; opacity: 0; border: none; box-shadow: none; pointer-events: none; }
         .camera-carousel:active { cursor: grabbing; }
 
         /* Ascenseur horizontal personnalisé (Scrollbar) */
@@ -76,7 +75,6 @@
         .camera-carousel::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         .camera-carousel::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
-        /* Réduction de 30% de la hauteur des cartes */
         .camera-card {
             flex: 0 0 auto; width: 95px; height: 80px; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 6px; background: white;
@@ -103,8 +101,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s ease;
         }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0, 85, 255, 0.3); }
-        
-        /* Style spécial quand la catégorie est sélectionnée mais le catalogue est masqué */
         .chip.active-hidden { background: white; color: var(--primary); border-color: var(--primary); box-shadow: 0 2px 5px rgba(0, 85, 255, 0.2); }
 
         .mentions { text-align: center; font-size: 10px; color: #666; margin-top: -2px; cursor: pointer; text-decoration: underline;}
@@ -139,14 +135,17 @@
     
     <a href="https://youtube.com/@ecoradinmalin" target="_blank" class="yt-badge">▶ <span data-i18n="ytSub">ECR Tech sur Youtube</span></a>
 
+    <div class="top-left-controls">
+        <div class="control-group">
+            <span class="control-label" data-i18n="mapSat">Carte / Satellite</span>
+            <div class="custom-btn" onclick="toggleLayer()" id="layer-btn">🗺️</div>
+        </div>
+    </div>
+
     <div class="top-right-controls">
         <div class="control-group">
             <span class="control-label" data-i18n="langLabel">Langue</span>
             <div class="custom-btn" onclick="toggleLang()" id="lang-btn" style="font-size: 14px;">EN</div>
-        </div>
-        <div class="control-group">
-            <span class="control-label" data-i18n="mapSat">Carte / Satellite</span>
-            <div class="custom-btn" onclick="toggleLayer()" id="layer-btn">🗺️</div>
         </div>
         
         <div class="control-group">
@@ -303,7 +302,10 @@
         const geocoderControl = L.Control.geocoder({ defaultMarkGeocode: false }).on('markgeocode', function(e) { map.fitBounds(e.geocode.bbox); }).addTo(map);
         const searchGroup = document.createElement('div'); searchGroup.className = 'control-group'; 
         searchGroup.innerHTML = '<span class="control-label" data-i18n="search">Rechercher une adresse</span>';
-        searchGroup.appendChild(geocoderControl.getContainer()); document.querySelector('.top-right-controls').prepend(searchGroup);
+        
+        // MODIFICATION : Injection de la barre de recherche dans la div de GAUCHE
+        searchGroup.appendChild(geocoderControl.getContainer()); 
+        document.querySelector('.top-left-controls').prepend(searchGroup);
 
         let placedCameras = {}; let basket = [];
         const cameras = appConfig.cameras;
@@ -313,9 +315,9 @@
 
         function toggleModal(id) { const modal = document.getElementById(id); modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex'; }
 
-        // --- 4. CATALOGUE ET CHIPS (AVEC TOGGLE) ---
+        // --- 4. CATALOGUE ET CHIPS ---
         let currentFilter = 'toutes';
-        let isCarouselVisible = true; // État de visibilité du bandeau
+        let isCarouselVisible = true; 
 
         function renderChips() {
             const container = document.getElementById('chips-container');
@@ -340,10 +342,8 @@
                     const clickedCategory = e.target.getAttribute('data-category');
                     
                     if (currentFilter === clickedCategory) {
-                        // Si on clique sur la catégorie déjà active, on bascule la visibilité
                         isCarouselVisible = !isCarouselVisible;
                     } else {
-                        // Si on clique sur une nouvelle catégorie, on l'active et on force l'affichage
                         currentFilter = clickedCategory;
                         isCarouselVisible = true;
                     }
@@ -359,7 +359,7 @@
             
             if (!isCarouselVisible) {
                 carousel.classList.add('hidden-carousel');
-                return; // Pas besoin de vider le contenu, juste le cacher
+                return; 
             } else {
                 carousel.classList.remove('hidden-carousel');
             }
