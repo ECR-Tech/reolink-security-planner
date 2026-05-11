@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     
     <style>
-        :root { --primary: #0055ff; --dark: #1a1a1a; --light: #f4f4f9; --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.15); --youtube: #ff0000; --amazon: #ff9900; }
+        :root { --primary: #0055ff; --dark: #1a1a1a; --light: #f4f4f9; --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.15); --youtube: #ff0000; --amazon: #ff9900; --success: #28a745; }
         body, html { margin: 0; padding: 0; height: 100dvh; width: 100vw; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; background-color: #f4f4f4; }
 
         /* --- Header Badges (Flottants) --- */
@@ -56,21 +56,10 @@
         .camera-carousel:active { cursor: grabbing; }
 
         /* Ascenseur horizontal personnalisé (Scrollbar) */
-        .camera-carousel::-webkit-scrollbar {
-            height: 8px;
-        }
-        .camera-carousel::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-            border-radius: 10px;
-            margin: 0 10px;
-        }
-        .camera-carousel::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-        .camera-carousel::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
+        .camera-carousel::-webkit-scrollbar { height: 8px; }
+        .camera-carousel::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; margin: 0 10px; }
+        .camera-carousel::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+        .camera-carousel::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         
         .camera-card {
             flex: 0 0 auto; width: 110px; height: 110px; display: flex; flex-direction: column;
@@ -116,6 +105,10 @@
         
         .tech-input { width: 45px; padding: 2px 4px; margin: 0 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; text-align: center; color: var(--primary); background: white; }
         .tech-input:focus { outline: 2px solid var(--primary); }
+        
+        /* Bouton Ajouter Map */
+        .btn-add-map { width: 100%; text-align: center; background: var(--success); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px rgba(40,167,69,0.2); cursor: pointer; margin-bottom: 10px; transition: transform 0.2s, background 0.2s;}
+        .btn-add-map:hover { background: #218838; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -202,6 +195,11 @@
                 <a id="info-amz-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--amazon); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(255,153,0,0.2);">Amazon</a>
                 <a id="info-reo-btn" href="#" target="_blank" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,85,255,0.2);">Reolink</a>
             </div>
+            
+            <button id="info-add-map-btn" class="btn-add-map">
+                <span data-i18n="addToMap">Ajouter sur la carte</span> 🎯
+            </button>
+            
             <a id="info-yt-btn" href="#" target="_blank" style="display:block; text-align:center; background:var(--youtube); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:bold; box-shadow: 0 4px 6px rgba(255,0,0,0.2);">🎬 <span data-i18n="ytBtn">Voir mon test complet</span></a>
         </div>
     </div>
@@ -223,8 +221,8 @@
     <script>
         // --- 1. MOTEUR DE TRADUCTION ---
         const dict = {
-            fr: { title: "ReoLink Security Planner", ytSub: "ECR Tech sur Youtube", langLabel: "Langue", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier les caractéristiques manuellement", seeTechSpecs: "Voir les fiches techniques :", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
-            en: { title: "ReoLink Security Planner", ytSub: "ECR Tech on Youtube", langLabel: "Language", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Modify specs manually", seeTechSpecs: "View technical specs:", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
+            fr: { title: "ReoLink Security Planner", ytSub: "ECR Tech sur Youtube", langLabel: "Langue", mapSat: "Carte / Satellite", zoomLabel: "Zoom", search: "Rechercher une adresse", catalog: "Catalogue Caméras", clickToPlace: "Cliquez pour placer", cgu: "Mentions Légales & Affiliation", cartEmpty: "Votre projet est vide.", myProject: "Mon Projet", projectElements: "Éléments<br>du projet", seeAllAmz: "Voir tout sur Amazon", seeAllReo: "Voir tout sur Reolink", specs: "Spécifications techniques :", angle: "Angle de vision :", visionMax: "Vision globale max :", pir: "Détection PIR/IA :", flood: "Éclairage (Floodlight) :", editable: "Modifier les caractéristiques manuellement", seeTechSpecs: "Voir les fiches techniques :", addToMap: "Ajouter sur la carte", ytBtn: "Voir mon test complet", cguTitle: "Mentions Légales", cguText: "Cet outil est gratuit. Les liens vers les boutiques sont des liens d'affiliation permettant de soutenir la chaîne Ecoradinmalin. Aucune donnée n'est collectée ou envoyée sur un serveur.", visionLabel: "Vision Caméra", floodLabel: "Éclairage Floodlight", pirLabel: "Détection PIR" },
+            en: { title: "ReoLink Security Planner", ytSub: "ECR Tech on Youtube", langLabel: "Language", mapSat: "Map / Satellite", zoomLabel: "Zoom", search: "Search address", catalog: "Camera Catalog", clickToPlace: "Click to place", cgu: "Legal Notice & Affiliation", cartEmpty: "Your project is empty.", myProject: "My Project", projectElements: "Project<br>elements", seeAllAmz: "See all on Amazon", seeAllReo: "See all on Reolink", specs: "Technical specifications:", angle: "Viewing angle:", visionMax: "Max global vision:", pir: "PIR/AI Detection:", flood: "Floodlight:", editable: "Modify specs manually", seeTechSpecs: "View technical specs:", addToMap: "Add to map", ytBtn: "Watch full review", cguTitle: "Legal Notice", cguText: "This tool is free. Links to stores are affiliate links to support the Ecoradinmalin channel. No data is collected or sent to any server.", visionLabel: "Camera Vision", floodLabel: "Floodlight", pirLabel: "PIR Detection" }
         };
 
         let currentLang = (navigator.language || navigator.userLanguage).startsWith('fr') ? 'fr' : 'en';
@@ -341,8 +339,11 @@
                     `<img src="${cam.img}" class="cam-img-cat" alt="${cam.name}">` : 
                     `<span class="cam-placeholder">📹</span>`;
 
-                card.innerHTML = `<div class="info-btn" onclick="event.stopPropagation(); showCameraInfo('${cam.id}')">i</div>${imageHtml}<span class="name">${cam.name}</span>`;
-                card.onclick = () => addCameraToMap(cam);
+                card.innerHTML = `<div class="info-btn">i</div>${imageHtml}<span class="name">${cam.name}</span>`;
+                
+                // MODIFICATION : Clic sur la carte ouvre la fiche info au lieu de placer directement
+                card.onclick = () => showCameraInfo(cam.id);
+                
                 carousel.appendChild(card);
             });
             carousel.scrollTo({ left: 0, behavior: 'smooth' });
@@ -387,6 +388,13 @@
             document.getElementById('info-amz-btn').href = applyAffiliate(cam.amzLink, 'amazon');
             document.getElementById('info-reo-btn').href = applyAffiliate(cam.reoLink, 'reolink');
             
+            // MODIFICATION : Action du bouton "Ajouter sur la carte"
+            const addMapBtn = document.getElementById('info-add-map-btn');
+            addMapBtn.onclick = () => {
+                addCameraToMap(cam);
+                toggleModal('info-modal'); // Ferme la popup automatiquement
+            };
+
             const ytBtn = document.getElementById('info-yt-btn');
             if (cam.ytLink && cam.ytLink !== '') { ytBtn.style.display = 'block'; ytBtn.href = cam.ytLink; } else { ytBtn.style.display = 'none'; }
             toggleModal('info-modal');
